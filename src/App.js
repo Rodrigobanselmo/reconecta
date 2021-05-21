@@ -7,25 +7,30 @@ import LoaderProvider from './context/LoaderContext';
 import NotificationProvider from './context/NotificationContext';
 import { RouteComponent, routes } from './routes';
 import { GlobalStyle } from './styles/global';
+import { AuthProvider } from './context/AuthContext.js';
+import { LoaderContext } from './context/LoadDashContext';
 
 const ThemeColor = createMuiTheme(themeColor);
 
 export const App = () => (
   <MuiThemeProvider theme={ThemeColor}>
     <ThemeProvider theme={ThemeColor}>
-      <NotificationProvider>
-        <LoaderProvider>
-          <Router>
-            <Switch>
-              {routes.map((route) => (
-                <RouteComponent key={route.path} {...route} />
-              ))}
-            </Switch>
-          </Router>
-          <h1>Hello i</h1>
-          <GlobalStyle />
-        </LoaderProvider>
-      </NotificationProvider>
+      <LoaderContext>
+        <NotificationProvider>
+          <LoaderProvider>
+            <Router>
+              <AuthProvider>
+                  <Switch>
+                    {routes.map((route) => (
+                      <RouteComponent key={route.path} {...route} />
+                    ))}
+                  </Switch>
+              </AuthProvider>
+            </Router>
+            <GlobalStyle />
+          </LoaderProvider>
+        </NotificationProvider>
+      </LoaderContext>
     </ThemeProvider>
   </MuiThemeProvider>
 );

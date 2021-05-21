@@ -4,7 +4,7 @@ import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
 import Slide from '@material-ui/core/Slide';
-import {ButtonDisable,ArrowForward,ArrowRight} from '../../Initial/ButtonElements'
+import {ButtonDisable,ArrowForward,ArrowRight} from '../ButtonElements'
 import AiOutlineClose from '@material-ui/icons/Close';
 import styled from "styled-components";
 

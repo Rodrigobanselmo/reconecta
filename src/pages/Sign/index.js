@@ -1,7 +1,8 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import {useLoaderScreen} from '../context/LoaderContext'
-import {useNotification} from '../context/NotificationContext'
+import {useLoaderScreen} from '../../context/LoaderContext'
+import {useNotification} from '../../context/NotificationContext'
+import SignIn from '../../components/Main/Sign';
 import styled from "styled-components";
 
 const Div = styled.div`
@@ -34,10 +35,11 @@ function SignInPage() {
 
   return (
     <Div>
-      <button onClick={name}>ss</button>
-      OI
+      <SignIn emailQuery={query.get('email')} />
     </Div>
   );
 }
 
 export default SignInPage;
+
+{/* <button onClick={name}>ss</button> */}

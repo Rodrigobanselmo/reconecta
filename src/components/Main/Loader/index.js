@@ -2,6 +2,7 @@ import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import { LoadFullScreen, LoadDashboard } from './Loader.js';
 import LottieAnimation from '../../../lib/lottie';
+import {useLoaderDashboard} from '../../../context/LoadDashContext'
 
 const SlideUp = keyframes`
     0% {
@@ -16,8 +17,8 @@ const SlideUp = keyframes`
 `;
 
 const Image = styled.img`
-  width: 90px;
-  height: 90px;
+  height: 75px;
+  resize:cover;
   animation: ${SlideUp} 1.5s;
   animation-iteration-count: infinite;
 `;
@@ -46,7 +47,7 @@ export const LoaderDashboard = ({ children, open = true }) => {
     <>
       {loaderDash && (
         <LoadDashboard open={open}>
-          <Image src="/images/logo-only.svg" alt="logo" />
+          <Image src="/images/logore.jpg" alt="logo" />
         </LoadDashboard>
       )}
       {children}
