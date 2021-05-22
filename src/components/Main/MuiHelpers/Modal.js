@@ -4,7 +4,7 @@ import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
 import Slide from '@material-ui/core/Slide';
-import styled from "styled-components";
+import styled, {css} from "styled-components";
 import IconButton from '@material-ui/core/IconButton';
 import {Icons} from '../../Icons/iconsDashboard'
 import {useNotification} from '../../../context/NotificationContext'
@@ -29,6 +29,16 @@ const Title = styled.p`
   color: ${props=>props.theme.palette.text.primary};
   font-size: 22px;
   font-weight: bold;
+
+  ${props => props.padding && css`
+      left:0;
+      position: relative;
+      margin: 0 0 30px 0;
+      text-align:left;
+      align-self:left;
+      margin-right:auto;
+  `}
+
 `;
 
 const IconCloseButton = styled.div`
@@ -39,6 +49,11 @@ const IconCloseButton = styled.div`
   padding:7px;
   border-radius:4px;
   max-width:100px;
+
+  ${props => props.padding && css`
+      top: 10px;
+  `}
+
 `;
 
 const IconCloseFull = styled.div`
@@ -107,7 +122,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export function ModalMui({children,open,onClose,title}) {
+export function ModalMui({children,open,onClose,title,padding='60px 23px 20px 20px'}) {
 
   const classes = useStyles();
 
@@ -128,11 +143,11 @@ export function ModalMui({children,open,onClose,title}) {
       >
         <Fade in={open}>
 {/*         <Slide direction="up" in={true} mountOnEnter unmountOnExit timeout={600}> */}
-          <div className={classes.paper}>
+          <div style={{padding:padding=='large'?'10px 40px 40px 40px':'60px 23px 20px 20px'}} className={classes.paper}>
             {title ?
-            <Title>{title}</Title>
+            <Title padding={padding}>{title}</Title>
             : null}
-              <IconCloseButton >
+              <IconCloseButton padding={padding}>
                 <IconButton onClick={onCloseModal} aria-label="close">
                     <Icon type={'Close'} />
                 </IconButton>

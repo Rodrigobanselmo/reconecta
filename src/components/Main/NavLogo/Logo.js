@@ -36,7 +36,7 @@ export const NavLogoSC = styled(Link)`
 
 export const NavLogoSCDiv = styled.div`
   /* color: ${({theme})=> theme.palette.text.contrastWhite}; */
-  color: ${({theme})=> theme.palette.primary.contrastText};
+  color: ${({theme})=> theme.palette.text.primary};
   justify-self: flex-start;
   cursor: pointer;
   font-size: 1.5rem;

@@ -85,7 +85,7 @@ export default function NavBar({open,setOpen}) {
 
   return (
       <AppBar
-        elevation={18}
+        elevation={5}
         position="fixed"
         className={clsx(classes.appBar, {
           [classes.appBarShift]: open,

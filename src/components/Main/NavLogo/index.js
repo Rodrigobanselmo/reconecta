@@ -12,7 +12,7 @@ export const NavLogo = React.memo((props) => {
 
   const dispatch = useDispatch()
   return (
-            <NavLogoSCDiv {...props} onClick={()=>{}} >
+            <NavLogoSCDiv  {...props} onClick={()=>{}} >
                   re<span>conecta</span>
             </NavLogoSCDiv>
   );

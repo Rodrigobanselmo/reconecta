@@ -12,23 +12,23 @@ import {
 export const useStyles = makeStyles((theme) => ({
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
-    backgroundColor:theme.palette.primary.mainBlue,
+    backgroundColor:theme.palette.background.nav,
     height:70,
     paddingTop:3,
   },
   menuButton: {
     marginRight: 36,
-    color: theme.palette.background.iconsPaper,
+    color: theme.palette.text.primaryNav,
   },
   iconColor: {
-    color: theme.palette.background.iconsPaper,
+    color: theme.palette.text.primaryNav,
   },
   grow: {
     flexGrow: 1,
   },
   profileContainer: {
     padding:2,
-    backgroundColor:'#D7D7D9cc',
+    backgroundColor:theme.palette.text.primaryNav,
     marginLeft:12,
     height:50,
     width:50,
@@ -39,7 +39,7 @@ export const useStyles = makeStyles((theme) => ({
     transform:'scale(0.9)'
   },
   profile: {
-    border: `2.5px solid ${theme.palette.primary.mainBlue}`,
+    border: `2.5px solid ${theme.palette.background.nav}`,
     backgroundColor:theme.palette.primary.main,
     height:46,
     width:46,

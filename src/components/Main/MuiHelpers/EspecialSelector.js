@@ -40,7 +40,7 @@ const Box = styled.div`
 const Selector = styled.div`
   height:35px;
   width:100%;
-  border: 1px solid ${({theme})=>theme.palette.type!== 'dark'? darken(theme.palette.background.contrast,0):darken(theme.palette.background.contrast,0)};
+  border: 1px solid ${({theme})=>theme.palette.type!== 'dark'? darken(theme.palette.background.line,0):darken(theme.palette.background.line,0)};
   background-color: ${({theme})=>theme.palette.type!== 'dark'? darken(theme.palette.background.paper,0):darken(theme.palette.background.paper,0)};
   display:flex;
   align-items: center;
@@ -70,7 +70,7 @@ const ItemContainer = styled.div`
   }
 
   &:hover {
-    background-color: ${({theme})=>theme.palette.type!== 'dark'? darken(theme.palette.background.paper,0.1):darken(theme.palette.background.contrast,0.2)};
+    background-color: ${({theme})=>theme.palette.type!== 'dark'? darken(theme.palette.background.paper,0.1):darken(theme.palette.background.line,0.2)};
   }
   &:active {
     opacity:0.7;
@@ -84,7 +84,7 @@ const ItemsContainer = styled.div`
   border-radius:4px;
   border-top-left-radius:0px;
   border-top-right-radius:0px;
-  border: 1px solid ${({theme})=>theme.palette.type!== 'dark'? darken(theme.palette.background.contrast,0):darken(theme.palette.background.contrast,0)};
+  border: 1px solid ${({theme})=>theme.palette.type!== 'dark'? darken(theme.palette.background.line,0):darken(theme.palette.background.line,0)};
   border-top: none;
   cursor: pointer;
   width:100%;
@@ -212,7 +212,7 @@ export function EspecialSelector({options=[],defaultValue=[],hideSelectAll,botto
             {isOpen &&
             <Box bottom={bottom}>
               <Search
-                style={{boxShadow:'none',borderBottomLeftRadius:0,borderBottomRightRadius:0,backgroundColor:theme.palette.type !=='dark'?darken(theme.palette.background.paper,0.02):darken(theme.palette.background.paper,0.25)}}//
+                style={{boxShadow:'none',borderBottomLeftRadius:0,borderBottomRightRadius:0,backgroundColor:darken(theme.palette.background.paper,0.02)}}//
                 onSearch={onSearchText}
                 searchLabel={text.search}
               />

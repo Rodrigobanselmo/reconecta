@@ -13,7 +13,8 @@ export function ModalButtons({
             title='Modal',
             disable=false,
             children,
-            onContextMenu
+            onContextMenu,
+            padding
         })
     {
 
@@ -30,7 +31,7 @@ export function ModalButtons({
   }
 
   return (
-    <ModalMui open={open} onClose={onCloseModal} title={title}>
+    <ModalMui open={open} padding={padding} onClose={onCloseModal} title={title}>
         <div style={{minWidth:'300px',marginTop:'10px'}}>
             {children}
         </div>

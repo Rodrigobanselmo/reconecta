@@ -17,12 +17,13 @@ const light = {
       paper: '#fff',
       paperModal: '#fafafa',
       default: '#e4dfdb',
+      paperHighlight: '#387b8533',
       inactive: '#a3a3a9',
       line: '#A8A8B355',
       hoverPaper: '#c0c2c250',
       attention: '#eb3b33',
       attentionHover: '#bf2407',
-      nav: '#ddd8d2',
+      nav: '#f1eeeb',
     },
     table: {
       hover: '#eee',
@@ -39,6 +40,7 @@ const light = {
       primary: '#000',
       secondary: '#303035',
       third: '#97969b',
+      primaryNav: '#00000088',
     },
     status: {
       success: '#5cb85c',

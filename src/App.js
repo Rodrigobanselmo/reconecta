@@ -8,11 +8,15 @@ import NotificationProvider from './context/NotificationContext';
 import { RouteComponent, routes } from './routes';
 import { GlobalStyle } from './styles/global';
 import { AuthProvider } from './context/AuthContext.js';
+import {MuiPickersUtilsProvider} from '@material-ui/pickers';
+import DateFnsUtils from '@date-io/date-fns';
 import { LoaderContext } from './context/LoadDashContext';
+import { ptBR } from "date-fns/locale";
 
 const ThemeColor = createMuiTheme(themeColor);
 
 export const App = () => (
+  <MuiPickersUtilsProvider locale={ptBR} utils={DateFnsUtils}>
   <MuiThemeProvider theme={ThemeColor}>
     <ThemeProvider theme={ThemeColor}>
       <LoaderContext>
@@ -33,4 +37,5 @@ export const App = () => (
       </LoaderContext>
     </ThemeProvider>
   </MuiThemeProvider>
+  </MuiPickersUtilsProvider>
 );

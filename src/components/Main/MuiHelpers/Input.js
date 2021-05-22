@@ -158,7 +158,7 @@ export function SelectedEnd({selected,setData,sliceItems=false,label,data=[],mar
     return (
       <BootstrapTooltip disableHoverListener={!Boolean(title)} placement="right" TransitionProps={{ timeout: {enter:500, exit: 50} }} title={title} styletooltip={{transform: 'translateY(-2.5px)'}}>
         <FormControl variant="outlined" style={{width:width,marginTop,marginBottom}} >
-            <InputLabelEnd margin={'dense'} htmlFor="outlined-age-native-simple">{label}</InputLabelEnd>
+            {label&&<InputLabelEnd margin={'dense'} htmlFor="outlined-age-native-simple">{label}</InputLabelEnd>}
             <SelectEnd
             inputProps={{
                 name: 'tipo',
@@ -268,7 +268,6 @@ export function InputDate({...props}) {
 
 
   return (
-    <MuiPickersUtilsProvider utils={DateFnsUtils}>
       <KeyboardDatePicker
         autoOk
         disableToolbar
@@ -281,13 +280,12 @@ export function InputDate({...props}) {
         invalidDateMessage='Formato de data inválido'
         // value={selectedDate}
         // onChange={handleDateChange}
-        InputAdornmentProps={{ position: "end" }}
+        InputAdornmentProps={{ position: "start" }}
         KeyboardButtonProps={{
           'aria-label': 'change date',
         }}
         style={{width:'100%'}}
         {...props}
       />
-    </MuiPickersUtilsProvider>
   )
 }

@@ -4,6 +4,10 @@ const daysShortArr = [
   'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'
 ];
 
+const daysArr = [
+  'Domimgo','Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sabado'
+];
+
 const monthNamesArr = [
   'Janeiro', 'Fevereiro', 'Março', 'abril',
   'Maio', 'Junho', 'Julho', 'Agosto',
@@ -78,6 +82,7 @@ const useCalendar = (daysShort = daysShortArr, monthNames = monthNamesArr) => {
 
   return {
     daysShort,
+    daysArr,
     monthNames,
     todayFormatted,
     calendarRows,
