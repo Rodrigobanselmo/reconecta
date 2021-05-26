@@ -320,7 +320,7 @@ const Calendar = () => {
                         <HourCard
                           style={{height:20,top:totalTopDistance}}
                           online={local=='online'}
-                          fill={space=='fill'}
+                          filll={space=='fill'}
                           toConfirm={space=='toConfirm'}
                           cancel={space=='cancel'}
                           prev={col.classes.includes('in-prev-month')}

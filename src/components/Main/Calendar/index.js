@@ -13,7 +13,6 @@ const LitDiv = styled.div`
   margin-top:-10px;
 `;
 
-
 const LitCircle = styled.div`
   justify-content: center;
   align-items: center;
@@ -28,12 +27,13 @@ const LitCircle = styled.div`
     background-color: ${({theme})=> theme.palette.primary.mainLight };
   `}
 
-  ${props => props.fill && css`
+  ${props => props.filll && css`
     background-color: ${({theme})=> theme.palette.primary.main };
   `}
 
 
 `;
+
 const Circle = styled.div`
   justify-content: center;
   align-items: center;
@@ -73,14 +73,11 @@ const Header = styled.div`
   color: ${({theme})=> theme.palette.text.secondary };
 `;
 
-
 const Table = styled.table`
 `;
 
-
 const Week = styled.tr`
 `;
-
 
 const Day = styled.td`
   padding:15px 10px;
@@ -91,7 +88,6 @@ const Day = styled.td`
 
 
 `;
-
 
 const CalendarContainer = styled.div`
   background-color: ${({theme})=>theme.palette.background.paper};
@@ -161,7 +157,7 @@ const Calendar = () => {
                       {col.value}
                     </Circle>
                     <LitDiv>
-                      <LitCircle free={aulas[col.date] && aulas[col.date].type=='free'} fill={aulas[col.date] && aulas[col.date].type=='fill'}/>
+                      <LitCircle free={aulas[col.date] && aulas[col.date].type=='free'} filll={aulas[col.date] && aulas[col.date].type=='fill'}/>
                     </LitDiv>
                   </Day>
                  )

@@ -1,8 +1,9 @@
+import { darken, fade } from "@material-ui/core/styles";
 const light = {
   palette: {
     type: 'light',
     primary: {
-      main: '#b0b2e4',
+      main: '#387b85',
       mainBlue: '#38568a',
       mainGreen: '#387b85',
       mainPurple: '#b9bbea',
@@ -23,7 +24,9 @@ const light = {
       hoverPaper: '#c0c2c250',
       attention: '#eb3b33',
       attentionHover: '#bf2407',
-      nav: '#f1eeeb',
+      // nav: '#f1eeeb',
+      nav: '#fff',
+      drawer: '#1a1a1e',
     },
     table: {
       hover: '#eee',
@@ -59,12 +62,12 @@ const light = {
       text: '#353539',
     },
     drawer: {
+      listTitle: '#fff',
+      icon: '#7d7c85',
+      textListInactive: '#7d7c85',
       // arrowOpen: '#d9560b',
       arrowOpen: '#F27329',
-      listTitle: '#97969b',
-      icon: '#5b5a5f',
       textListSelected: '#F27329',
-      textListInactive: '#1b1c2199',
       circleSelected: '#1b1c21cc',
       textSubListInactive: 'blue',
       textSubListSelected: '#5b5a5f',

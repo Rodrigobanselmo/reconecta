@@ -1,14 +1,14 @@
 import React, {useContext} from 'react';
-import {Icons} from '../../../components/Icons/iconsDashboard';
+import {Icons} from '../../../../components/Icons/iconsDashboard';
 import {
   ContainerDiv,
   ButtonContainer
 } from './styles';
-import NewTabs, {TabPanel} from '../../../components/Main/MuiHelpers/NewTabs'
-import {FilterComponent,LoadingContent,AddUserButton} from '../../../components/Main/Table/comp'
+import NewTabs, {TabPanel} from '../../../../components/Main/MuiHelpers/NewTabs'
+import {FilterComponent,LoadingContent,AddUserButton} from '../../../../components/Main/Table/comp'
 import {onGetAllUsersCompany} from './func'
 import {Link} from "react-router-dom";
-import {keepOnlyNumbers} from '../../../helpers/StringHandle';
+import {keepOnlyNumbers} from '../../../../helpers/StringHandle';
 import {useHistory} from "react-router-dom";
 import TableComponent from './table.js';
 

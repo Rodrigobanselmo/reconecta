@@ -19,6 +19,8 @@ import HoursSelection from '../Components/HourSelector'
 import WeekDaysSelector from '../Components/WeekDaysSelector'
 import ModalPick from '../Components/ModalPick'
 import { useSelector,useDispatch } from 'react-redux'
+import {BootstrapTooltip} from '../../MuiHelpers/Tooltip'
+import {AddUserButton} from '../../Table/comp'
 
 const sortTime = function (a, b) {
   if (parseInt(a.split(':')[0]) > parseInt(b.split(':')[0])) {
@@ -36,16 +38,51 @@ const sortTime = function (a, b) {
   return 0;
 };
 
+
+const initialValue={
+  date:new Date(),
+  timeValue:`${(new Date()).getHours()}:00-${(new Date()).getHours()+1}:00`,
+  time:{
+    area: false,
+    local:'online',
+    dateEnd:false,
+    numberOfConsults:1,
+    reptAfter:1,
+    consultTime:`1:0`,
+    intervalo:`0:0`,
+    daysSelected:[(new Date()).getDay()],
+    checked:false,
+    numberOfConsultsCheck:false,
+    initialTime:false
+  },
+}
+
+
 const Calendar = () => {
 
   const calendar = useSelector(state => state.calendar)
 
-  const { calendarRows, selectedDate, todayFormatted, daysShort, daysArr, monthNames, getNextMonth, getPrevMonth } = useCalendar();
+  const { calendarRows, selectedDate, todayFormatted, daysShort, monthNames, getTodayMonth, getNextMonth, getPrevMonth } = useCalendar();
   const [selected, setSelected] = React.useState(todayFormatted)
-  const [hours, setHours] = React.useState(calendar)
+  const [oldSelected, setOldSelected] = React.useState(null)
+  const [oldWeek, setOldWeek] = React.useState(null)
+  const [dataCard, setDataCard] = React.useState(initialValue)
   const [open, setOpen] = React.useState(false)
 
+  // React.useEffect(() => {
+
+  //   if ()
+
+  //   Object.values(calendarRows).map((cols) => {
+  //     if (cols.findIndex( i=>i.date== selected) != -1) {
+  //       setOldSelected(cols)
+  //     }
+  //   })
+
+  // }, [selected])
+
   const getPrevWeek = () => {
+    setOldWeek('prev')
     Object.keys(calendarRows).map(key=>{
 
       if (calendarRows[key].findIndex( i=>i.date== selected) != -1 && calendarRows[parseInt(key)-1]) {
@@ -55,6 +92,10 @@ const Calendar = () => {
         const month = parseInt(calendarRows[3][0].date.split('-')[1])
         const year = parseInt(calendarRows[3][0].date.split('-')[2])
 
+        function getDay() {
+          if (calendarRows[1][0].classes != '') return (calendarRows[1][0].value-1)
+          return false
+        }
         function getMonth() {
           if (month-1 == 0) return 12
           return (month-1)
@@ -65,8 +106,8 @@ const Calendar = () => {
         }
 
         function onGetLastDay(day) {
-          console.log('day',`${day}-${getMonth()}-${getYear()}`)
-          setSelected(`${day}-${getMonth()}-${getYear()}`)
+          const actual = getDay();
+          setSelected(`${actual?actual:day}-${getMonth()}-${getYear()}`)
         }
 
         getPrevMonth({week:onGetLastDay})
@@ -75,12 +116,17 @@ const Calendar = () => {
   }
 
   const getNextWeek = () => {
+    setOldWeek('next')
     Object.keys(calendarRows).map(key=>{
 
       if (calendarRows[key].findIndex( i=>i.date== selected) != -1 && parseInt(key) == 5 && calendarRows[6] && calendarRows[6].findIndex( i=>i.classes== '') == -1) {
         const month = parseInt(calendarRows[3][0].date.split('-')[1])
         const year = parseInt(calendarRows[3][0].date.split('-')[2])
 
+        function getDay() {
+          if (calendarRows[5][6].classes != '') return (calendarRows[5][6].value+1)
+          return 1
+        }
         function getMonth() {
           if (month+1 > 12) return 1
           return (month+1)
@@ -89,19 +135,21 @@ const Calendar = () => {
           if (month+1 > 12) return year+1
           return year
         }
-        console.log('DAY+WEEK',`1-${getMonth()}-${getYear()}`)
-        setSelected(`1-${getMonth()}-${getYear()}`)
+        setSelected(`${getDay()}-${getMonth()}-${getYear()}`)
         getNextMonth()
       }
 
 
         if (calendarRows[key].findIndex( i=>i.date== selected) != -1 && calendarRows[parseInt(key)+1]) {
         setSelected(calendarRows[parseInt(key)+1][0].date)
-        // console.log(calendarRows[parseInt(key)+1][0].date)
       } else if (calendarRows[key].findIndex( i=>i.date== selected) != -1 && !calendarRows[parseInt(key)+1]) {
         const month = parseInt(calendarRows[3][0].date.split('-')[1])
         const year = parseInt(calendarRows[3][0].date.split('-')[2])
 
+        function getDay() {
+          if (calendarRows[6][6].classes != '') return (calendarRows[6][6].value+1)
+          return 1
+        }
         function getMonth() {
           if (month+1 > 12) return 1
           return (month+1)
@@ -110,31 +158,71 @@ const Calendar = () => {
           if (month+1 > 12) return year+1
           return year
         }
-        console.log('DAY+WEEK',`1-${getMonth()}-${getYear()}`)
-        setSelected(`1-${getMonth()}-${getYear()}`)
+        setSelected(`${getDay()}-${getMonth()}-${getYear()}`)
         getNextMonth()
       }
     })
   }
+
+  const getToday = () => {
+    setSelected(todayFormatted)
+    getTodayMonth()
+  }
+
+  const onAddButton = () => {
+    setDataCard(initialValue)
+    setOpen(true)
+  }
+
+  function formatDate(date) {
+    var formatDate = date.split('-')
+    var restFormatDate = formatDate.splice(1,1)
+    restFormatDate.push(...formatDate)
+    formatDate = restFormatDate.join('/')
+    return new Date(formatDate)
+  }
+
+  const editCard = (data) => {
+    const date = formatDate(data.date.date)
+
+    if (date<(new Date((new Date()).setHours(0,0,0,0)))) return null
+
+    const newDate = {
+      date,
+      timeValue:data.time,
+      time: data.date.time[data.time]
+    }
+    setDataCard(newDate)
+  }
+
+  React.useEffect(() => {
+    if (dataCard!=initialValue) setOpen(true)
+  }, [dataCard])
 
   return(
     <>
     <CalendarContainer>
       <Header>
         <div style={{display:'flex',alignItems:'center'}}>
-          <p style={{marginRight:10}}>{`${monthNames[selectedDate.getMonth()]} ${selectedDate.getFullYear()}`}</p>
           <div>
-            <IconButton  size={'small'} style={{marginRight:10}} aria-label={'leftArrowC'} onClick={getPrevWeek}>
-                <Icons  style={{fontSize:30}} type={'KeyboardArrowLeft'} />
+            <IconButton  size={'small'} style={{marginRight:0,marginLeft:-5}} aria-label={'leftArrowC'} onClick={getPrevWeek}>
+                <Icons  style={{fontSize:35}} type={'KeyboardArrowLeft'} />
             </IconButton>
-            <IconButton size={'small'} style={{marginRight:-16}} aria-label={'rightArrowC'} onClick={getNextWeek}>
-                <Icons style={{fontSize:30}} type={'KeyboardArrowRightIcon'} />
+          <BootstrapTooltip placement="bottom" TransitionProps={{ timeout: {enter:500, exit: 50} }} title={'Hoje'} styletooltip={{transform: 'translateY(0px)'}}>
+              <IconButton  size={'small'} style={{marginRight:-2}} aria-label={'Calendar'} onClick={getToday}>
+                  <Icons  style={{fontSize:22}} type={'Calendar'} />
+              </IconButton>
+          </BootstrapTooltip>
+            <IconButton size={'small'} style={{marginRight:16,marginLeft:0}} aria-label={'leftArrow'} onClick={getNextWeek}>
+                <Icons style={{fontSize:35}} type={'KeyboardArrowRightIcon'} />
             </IconButton>
           </div>
+          <p style={{marginRight:10,minWidth:120}}>{`${monthNames[selectedDate.getMonth()]} ${selectedDate.getFullYear()}`}</p>
         </div>
-        <NewIconButton
+        {/* <NewIconButton
           onClick={()=>setOpen(true)}
-        />
+        /> */}
+        <AddUserButton onClick={onAddButton} text={'Novo horário'} icon={'Add'} width={160} />
 
 
       </Header>
@@ -144,29 +232,34 @@ const Calendar = () => {
           <Week key={cols[0].date}>
             {cols.map((col,index) => {
               const isToday = col.date === todayFormatted;
-              const isSelected = col.date === selected;
+              const toHide = (index==6||index==5)&&!(calendar && calendar[col.date] &&  Object.keys(calendar[col.date].time).length > 0)
               return (
-              <ContainerWeek key={col.date} last={index==6}>
+              <ContainerWeek key={col.date} last={index==6} hide={toHide}>
                 <ContainerWeekdays today={isToday}>
                   <span>{col.value}</span>
                   <p style={{textAlign:'left',paddingLeft:5,fontSize:14,fontWeight:'bold'}} >
                     {daysShort[index]}
                   </p>
-                  <p style={{position:'absolute',bottom:2,right:5,fontSize:10}}>{`${monthNames[selectedDate.getMonth()]}`}</p>
+                  {!toHide&&<p style={{position:'absolute',bottom:2,right:5,fontSize:10}}>{`${monthNames[selectedDate.getMonth()]}`}</p>}
                 </ContainerWeekdays>
-                {hours && hours[col.date] &&  Object.keys(hours[col.date].time).sort(sortTime).map((dateKey,indexDate) => {
-                  const local = hours[col.date].time[dateKey].local
-                  const space = hours[col.date].time[dateKey].space
+                {calendar && calendar[col.date] &&  Object.keys(calendar[col.date].time).sort(sortTime).map((dateKey,indexDate) => {
+                  const local = calendar[col.date].time[dateKey].local
+                  // const space = calendar[col.date].time[dateKey].space
+                  const space = false
+                  const data = {date:calendar[col.date],time:dateKey}
                   return (
                     <CardDiv
+                      onClick={()=>editCard(data)}
+                      key={dateKey}
                       online={local=='online'}
-                      fill={space=='fill'}
+                      filll={space=='fill'}
                       toConfirm={space=='toConfirm'}
                       cancel={space=='cancel'}
-                      prev={col.classes.includes('in-prev-month')}
+                      prev={formatDate(col.date)<new Date('5/26./2021')}
+                      // prev={col.classes.includes('in-prev-month')}
                     >
                       <p>{dateKey}</p>
-                      <p style={{fontSize:10}}>Atendimento {hours[col.date].time[dateKey].local}</p>
+                      <p style={{fontSize:10}}>Atendimento {calendar[col.date].time[dateKey].local}</p>
                       {/* <p style={{position:'absolute',bottom:3,right:5,fontSize:10}}>
                         {space=='fill'?'ocupado':space=='toConfirm'?'aguardando':space=='free'?'Livre':'cancelado'}
                       </p> */}
@@ -180,7 +273,7 @@ const Calendar = () => {
         )})
       }
         {/* <Modal open={open} setOpen={setOpen}/> */}
-        <ModalPick open={open} setOpen={setOpen}/>
+        {(dataCard==initialValue||open)&&<ModalPick dataCard={dataCard} open={open} setOpen={setOpen}/>}
     </CalendarContainer>
     </>
   );

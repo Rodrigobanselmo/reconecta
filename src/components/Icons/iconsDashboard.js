@@ -52,6 +52,7 @@ import PriorityHighIcon from '@material-ui/icons/PriorityHigh';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 
 import Facebook from '@material-ui/icons/Facebook';
+import WhatsApp from '@material-ui/icons/WhatsApp';
 import YouTube from '@material-ui/icons/YouTube';
 import LinkedIn from '@material-ui/icons/LinkedIn';
 import Twitter from '@material-ui/icons/Twitter';
@@ -82,6 +83,8 @@ export const Icons = ({ type, ...props }) => {
       return <YouTube {...props} />;
     case 'Facebook':
       return <Facebook {...props} />;
+    case 'WhatsApp':
+      return <WhatsApp {...props} />;
 
     case 'Menu':
       return <MenuOutlinedIcon {...props} />;
@@ -95,6 +98,8 @@ export const Icons = ({ type, ...props }) => {
     case 'Error':
       return <ErrorOutlineRoundedIcon {...props} />;
     case 'Info':
+      return <BsInfoCircle {...props} />;
+    case 'Infos':
       return (<Logo style={{marginTop:3,opacity:0.7,cursor:'pointer'}} height="20px" width="20px"  {...props}/>);
     case 'InfoShade':
       return (<Logo style={{marginTop:3,opacity:0.4,cursor:'pointer'}} height="20px" width="20px"  {...props}/>);

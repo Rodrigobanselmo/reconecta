@@ -80,6 +80,10 @@ const useCalendar = (daysShort = daysShortArr, monthNames = monthNamesArr) => {
     setSelectedDate(prevValue => new Date(prevValue.getFullYear(), prevValue.getMonth() + 1, 1));
   }
 
+  const getTodayMonth = () => {
+    setSelectedDate(new Date());
+  }
+
   return {
     daysShort,
     daysArr,
@@ -88,7 +92,8 @@ const useCalendar = (daysShort = daysShortArr, monthNames = monthNamesArr) => {
     calendarRows,
     selectedDate,
     getPrevMonth,
-    getNextMonth
+    getNextMonth,
+    getTodayMonth
   }
 }
 

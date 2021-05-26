@@ -10,10 +10,11 @@ const CircleDay = styled.div`
   justify-content: center;
   border-radius: 20px;
   margin-right: 10px;
+  cursor: pointer;
 
   ${props => props.daySelected && css`
     color: ${({theme})=>theme.palette.primary.contrastText};
-    background-color: ${({theme})=> theme.palette.primary.mainBlue };
+    background-color: ${({theme})=> theme.palette.primary.main };
   `}
 `;
 
@@ -27,7 +28,7 @@ export default function WeekDaysSelector({onSelectedDay,daysSelected}) {
       <div style={{flexDirection:'row',display:'flex',alignItems:'center',justifyContent:"flex-start",marginTop:10}}>
         {['D','S','T','Q','Q','S','S'].map((Day,index)=>{
           return (
-            <CircleDay onClick={()=>onSelectedDay(index)} daySelected={daysSelected.includes(index)}>{Day}</CircleDay>
+            <CircleDay key={Day+index} onClick={()=>onSelectedDay(index)} daySelected={daysSelected.includes(index)}>{Day}</CircleDay>
           )
         })}
       </div>

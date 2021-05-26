@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from "styled-components";
-import {Icons} from '../../../components/Icons/iconsDashboard'
+import {Icons} from '../../../../components/Icons/iconsDashboard'
 
 const GroupIcon = styled(Icons)`
   font-size:50px;

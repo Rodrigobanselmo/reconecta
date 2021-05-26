@@ -1,3 +1,5 @@
+import {NormalizeData} from '../helpers/DataHandler';
+
 const aulas = {
   name:'Rodrigo Barbosa Anselmo',
   id:Math.random(),
@@ -78,7 +80,8 @@ const aulas = {
   },
 }
 
-const initialState = {...aulas}
+const initialState = {name:'',id:''}
+// const initialState = {...aulas}
 
 
 export default (state = initialState, action) => {
@@ -87,6 +90,10 @@ export default (state = initialState, action) => {
     switch(action.type) {
         case 'CALENDAR_SET':
         return action.payload;
+
+        case 'CALENDAR_ADD':
+          console.log('{...state,...action.payload}',{...state,...action.payload})
+        return {...state,...action.payload};
 
         default:
         return state;

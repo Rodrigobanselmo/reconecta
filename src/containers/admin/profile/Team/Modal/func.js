@@ -1,5 +1,5 @@
-import {CreatePendingUser,SeeIfUserExists} from '../../../../services/firestoreUser'
-import {NodeSendInviteEmail} from '../../../../services/nodeCalls'
+import {CreatePendingUser,SeeIfUserExists} from '../../../../../services/firestoreUser'
+import {NodeSendInviteEmail} from '../../../../../services/nodeCalls'
 
 
 function onSendInviteEmail(data,onClose,setLoad,notification) {
@@ -71,7 +71,7 @@ export function onCheckUser(value,user,index,setEmails,emails,notification) {
 
     function checkSuccess(response) {
       if (response[1]) {
-        allEmails[index] = {...allEmails[index],email:value, status:'Warn',message:'Email já cadastrado em uma empresa',type:''}
+        allEmails[index] = {...allEmails[index],email:value, status:'Warn',message:'Email já cadastrado',type:''}
         setEmails(allEmails)
       } else if (response[0]) {
         allEmails[index] = {...allEmails[index],email:value, status:'Check',message:'Email válido',type:'',id:response[0]}

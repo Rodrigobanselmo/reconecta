@@ -57,6 +57,7 @@ const NotificationProvider = (props) => {
       <ModalInfo
         title={modal?.title ? modal.title : 'Você tem certeza?'}
         text={modal?.text ? modal.text : ''}
+        component={modal?.component ? modal.component : false}
         open={modal?.open && modal.open ? modal.open : false}
         onClick={modal.onClick}
         onClose={modal.onClose}

@@ -1,6 +1,6 @@
 import React from 'react'
-import WindowTable from '../../../components/Main/WindowTable'
-import {filterObject} from '../../../helpers/ObjectArray'
+import WindowTable from '../../../../components/Main/WindowTable'
+import {filterObject} from '../../../../helpers/ObjectArray'
 import styled from "styled-components";
 
 const TableComponent = React.memo(({rowsCells,loadContent,search,setSelected,selected,handleCellClick}) => {

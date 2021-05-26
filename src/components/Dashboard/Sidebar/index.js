@@ -14,6 +14,11 @@ import {BootstrapTooltip} from '../../Main/MuiHelpers/Tooltip'
 import { useHistory } from "react-router-dom"
 import {ThemeContext} from "styled-components";
 import {useLoaderDashboard} from '../../../context/LoadDashContext'
+import {DASHBOARD} from '../../../routes/routesNames'
+import MenuIcon from '@material-ui/icons/Menu';
+import MenuOpen from '@material-ui/icons/MenuOpen';
+import {NavLogo} from '../../Main/NavLogo'
+import IconButton from '@material-ui/core/IconButton';
 
 function DrawerMenu({open,setOpen,lock,onClearTimeOut,onTimeOut,setLock}) {
 
@@ -275,6 +280,14 @@ function DrawerMenu({open,setOpen,lock,onClearTimeOut,onTimeOut,setLock}) {
     if (subNav) setSubNav(null)
   }
 
+  const handleDrawerOpen = () => {
+    setOpen(true);
+  };
+
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
+
   return (
     <Drawer
       onMouseEnter={onMouseEnterDrawer}
@@ -292,32 +305,23 @@ function DrawerMenu({open,setOpen,lock,onClearTimeOut,onTimeOut,setLock}) {
       }}
     >
 
-      <div style={{overflowY:'scroll',overflowX:'hidden',paddingBottom:10}}>
+      <div style={{overflowY:'auto',overflowX:'hidden',paddingBottom:10,backgroundColor:theme.palette.background.drawer,display:'flex',flex:1,flexDirection:'column'}}>
 
-        <div className={classes.search}>
-          <div className={clsx(classes.searchIcon,{
-            [classes.closeIcon]: search && search.length>=1,
-          })}>
-            <Icons style={search && search.length>=1?{fontSize:20,marginLeft:-2}:{fontSize:18}}
-              type={search && search.length>=1?'HighlightOff':'Search'}
-              onClick={onCleanSearch}
-              className={clsx(classes.SearchColored, {
-              [classes.searchIconOpen]: !open,
-            })}/>
-          </div>
-          <InputBase
-            onFocus={onFocusSearch}
-            onBlur={onBlurSearch}
-            value={search}
-            onChange={(e)=> onInputSearch(e)}
-            placeholder="Pesquisar…"
-            classes={{
-              root: classes.inputRoot,
-            }}
-            className={classes.inputInput}
-            inputProps={{ 'aria-label': 'search' }}
-          />
-        </div>
+          {/* <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            onClick={open ? handleDrawerClose:handleDrawerOpen}
+            edge="start"
+            className={clsx(classes.menuButton)}
+          >
+            {open ?
+            <MenuOpen />
+            :
+            <MenuIcon />
+            }
+          </IconButton> */}
+          <NavLogo isOpen={open} style={{margin:'10px 0 20px 20px'}} to={DASHBOARD} small='true' />
+
         {filteredArray.map((list) => (
           <div key={list.id}>
             <p className={clsx(classes.listTitle, {

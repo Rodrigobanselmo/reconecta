@@ -7,7 +7,7 @@ export function BootstrapTooltip(props) {
 
   const useStylesSign = makeStyles((theme) => ({
       arrow: {
-      zIndex:1000000,
+      zIndex:100000000000100000000000,
       color: "#fff",
         "&::before": {
           backgroundColor: "#fff",
@@ -16,7 +16,7 @@ export function BootstrapTooltip(props) {
         }
       },
       tooltip: {
-      zIndex:1000000,
+      zIndex:100000000000100000000000,
       color:'#000',
         borderRadius:5,
         fontSize:13,
@@ -31,7 +31,7 @@ export function BootstrapTooltip(props) {
 
   const useStylesDashboard = makeStyles((theme) => ({
     arrow: {
-      zIndex:1000000,
+      zIndex:100000000000100000000000,
       color: "#fff",
       "&::before": {
         backgroundColor: theme.palette.background.paper,
@@ -40,7 +40,7 @@ export function BootstrapTooltip(props) {
       }
     },
     tooltip: {
-      zIndex:1000000,
+      zIndex:100000000000100000000000,
       color:'#000',
       borderRadius:5,
       fontSize:13,
@@ -49,8 +49,8 @@ export function BootstrapTooltip(props) {
       color: theme.palette.text.primary,
       padding:'10px 12px',
       border: "1px solid #56565655",
-      WebkitBoxShadow: '2px 2px 15px 3px rgba(0,0,0,0.28)',
-      boxShadow: '2px 2px 15px 3px rgba(0,0,0,0.28)',
+      WebkitBoxShadow: '1px 1px 1px 1px rgba(0,0,0,0.1)',
+      boxShadow: '1px 1px 1px 1px rgba(0,0,0,0.1)',
       ...props.styletooltip
     },
   }));

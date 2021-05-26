@@ -122,7 +122,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export function ModalMui({children,open,onClose,title,padding='60px 23px 20px 20px'}) {
+export function ModalMui({children,open,onClose,title,padding}) {
 
   const classes = useStyles();
 
@@ -143,7 +143,7 @@ export function ModalMui({children,open,onClose,title,padding='60px 23px 20px 20
       >
         <Fade in={open}>
 {/*         <Slide direction="up" in={true} mountOnEnter unmountOnExit timeout={600}> */}
-          <div style={{padding:padding=='large'?'10px 40px 40px 40px':'60px 23px 20px 20px'}} className={classes.paper}>
+          <div style={{padding:padding=='large'?'10px 40px 40px 40px':'60px 23px 20px 20px',maxHeight:'90vh'}} className={classes.paper}>
             {title ?
             <Title padding={padding}>{title}</Title>
             : null}

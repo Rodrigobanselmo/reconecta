@@ -10,7 +10,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
-import {Icons} from '../../../../components/Icons/iconsDashboard';
+import {Icons} from '../../../../../components/Icons/iconsDashboard';
 import {
   InputEmail,
   Container,
@@ -23,14 +23,14 @@ import {
   Icon,
   AddAnother,
 } from './style';
-import {ModalMui, ModalFullScreen} from '../../../../components/Main/MuiHelpers/Modal'
-import {BootstrapTooltip} from '../../../../components/Main/MuiHelpers/Tooltip'
-import RichSelect from '../../../../components/Dashboard/Components/MultUsage/RichSelect'
-import useTimeOut from '../../../../hooks/useTimeOut';
-import {EmailVerification} from '../../../../helpers/StringVerification';
-import {ContinueButton} from '../../../../components/Main/MuiHelpers/Button'
-import {UserContainer,UserAvatar,GroupIcon,TextNameEmail} from '../../../../components/Dashboard/Components/Standard/Avatar'
-import Input from '../../../../components/Main/MuiHelpers/Input'
+import {ModalMui, ModalFullScreen} from '../../../../../components/Main/MuiHelpers/Modal'
+import {BootstrapTooltip} from '../../../../../components/Main/MuiHelpers/Tooltip'
+import RichSelect from '../../../../../components/Dashboard/Components/MultUsage/RichSelect'
+import useTimeOut from '../../../../../hooks/useTimeOut';
+import {EmailVerification} from '../../../../../helpers/StringVerification';
+import {ContinueButton} from '../../../../../components/Main/MuiHelpers/Button'
+import {UserContainer,UserAvatar,GroupIcon,TextNameEmail} from '../../../../../components/Dashboard/Components/Standard/Avatar'
+import Input from '../../../../../components/Main/MuiHelpers/Input'
 
 
 
@@ -135,7 +135,18 @@ AddModal.EmailInput =  function EmailInput({numInput,setNumInput,setEmails,email
   return(
     <EmailContainer>
       {[...Array(numInput)].map((i,index)=>(
-        <Input key={index} status={emails[index]?.status && emails[index].status} icon={emails[index]?.status && emails[index].status} validation={(emails && emails[index] && emails[index]?.status && (emails[index].status === 'Check' || emails[index].status === 'Warn' || emails[index].status === 'Load'))} onBlur={({target})=>checkEmail(index,target.value)} onChange={addEmail(index)} size={'small'} label="Email" variant="outlined"  />
+        <Input
+          key={index}
+          title={emails[index]?.message ?? ''}
+          status={emails[index]?.status && emails[index].status}
+          icon={emails[index]?.status && emails[index].status}
+          validation={(emails && emails[index] && emails[index]?.status && (emails[index].status === 'Check' || emails[index].status === 'Warn' || emails[index].status === 'Load'))}
+          onBlur={({target})=>checkEmail(index,target.value)}
+          onChange={addEmail(index)}
+          size={'small'}
+          label="Email"
+          variant="outlined"
+        />
       ))}
       <AddAnother onClick={()=>setNumInput(numInput=>numInput+1)}><p>Adicionar Outro</p></AddAnother>
     </EmailContainer>

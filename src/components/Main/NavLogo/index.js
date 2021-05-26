@@ -8,12 +8,12 @@ const Images = styled.img`
   resize:cover;
 `;
 
-export const NavLogo = React.memo((props) => {
+export const NavLogo = React.memo(({isOpen,...props}) => {
 
   const dispatch = useDispatch()
   return (
-            <NavLogoSCDiv  {...props} onClick={()=>{}} >
-                  re<span>conecta</span>
-            </NavLogoSCDiv>
+    <NavLogoSCDiv   {...props} onClick={()=>{}} >
+          re<span style={{color:isOpen?'#000':'#000'}}>conecta</span>
+    </NavLogoSCDiv>
   );
 })

@@ -1,5 +1,5 @@
-import { Sign, NotFound, Dashboard } from '../pages';
-import { SIGN,DASHBOARD } from './routesNames';
+import { Sign, NotFound, Dashboard, InputData } from '../pages';
+import { SIGN,DASHBOARD,REQUEST_ADMIN_DATA } from './routesNames';
 
 const routes = [
   {
@@ -17,12 +17,13 @@ const routes = [
     // condition: ['', 'Ativo'],
     // Equal: [false, true],
   },
-  // {
-  //   path: NO_AUTH,
-  //   component: NoCompany,
-  //   // isPrivate: true,
-  //   // privateRoute: SIGN,
-  // },
+  {
+    path: REQUEST_ADMIN_DATA,
+    component: InputData,
+    isPrivate: true,
+    // isPrivate: true,
+    // privateRoute: SIGN,
+  },
   // {
   //   path: GET_USER_DATA,
   //   component: inputUserData,

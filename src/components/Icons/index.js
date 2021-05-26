@@ -4,9 +4,10 @@
 // import BsExclamationTriangle from '@material-ui/icons/WarningRounded';
 // import BsCheckCircle from '@material-ui/icons/CheckCircleOutline';
 import styled, {css, keyframes} from 'styled-components/macro';
-import { FaBeer } from 'react-icons/fa';
+import { BsCheckCircle,BsExclamationTriangle,BsXOctagon,BsInfoCircle } from 'react-icons/bs';
+import { AiOutlineClose as Close } from 'react-icons/ai';
 
-export const IconCLose = styled(FaBeer)`
+export const IconCLose = styled(Close)`
 
     position: absolute;
     top: 7px;
@@ -27,26 +28,26 @@ export const IconCLose = styled(FaBeer)`
 
 `;
 
-export const IconCheck = styled(FaBeer)`
+export const IconCheck = styled(BsCheckCircle)`
     margin:13px;
     font-size:23px;
     color:#5cb85c;
     align-self:center;
 `;
-export const IconWarn = styled(FaBeer)`
+export const IconWarn = styled(BsExclamationTriangle)`
     margin:13px;
     font-size:23px;
     color:#c5aa10;
     align-self:center;
 `;
-export const IconError = styled(FaBeer)`
+export const IconError = styled(BsXOctagon)`
     /* color: #ae423f; */
     margin:13px;
     font-size:23px;
     color:#bd2f2a;
     align-self:center;
 `;
-export const IconInfo= styled(FaBeer)`
+export const IconInfo= styled(BsInfoCircle)`
     /*   color: #4e91d4; */
     margin:13px;
     font-size:23px;

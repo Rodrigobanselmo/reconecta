@@ -11,6 +11,7 @@ export const CardDiv = styled.div`
   border-radius:5px;
   margin-top: 5px;
   position:relative;
+  background-color: ${({theme})=> darken(theme.palette.background.paper,0.01) };
   cursor: pointer;
 
   &:hover {
@@ -40,6 +41,10 @@ export const CardDiv = styled.div`
 
   ${props => props.prev && css`
     opacity:0.5;
+      &:hover {
+        background-color: ${({theme})=> darken(theme.palette.background.paper,0.02) };
+        opacity:0.7;
+      }
   `}
 
 `;
@@ -53,7 +58,7 @@ export const ContainerWeekdays = styled.div`
   border-radius:2px;
   border-top-left-radius:10px;
   border-top-right-radius:10px;
-  background-color: ${({theme})=> theme.palette.primary.contrastText };
+  background-color: ${({theme})=> fade(theme.palette.primary.main,0.15) };
   border-bottom: 1px solid ${({theme})=> theme.palette.background.line };
 
   & span {
@@ -62,7 +67,7 @@ export const ContainerWeekdays = styled.div`
   }
 
   ${props => props.today && css`
-    background-color: ${({theme})=> theme.palette.primary.mainBlue };
+    background-color: ${({theme})=> theme.palette.primary.main };
     color: ${({theme})=> theme.palette.primary.contrastText };
   `}
 `;
@@ -70,18 +75,29 @@ export const ContainerWeekdays = styled.div`
 export const ContainerWeek = styled.div`
   display: flex;
   box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.12);
-  flex:1;
+  flex:10;
   flex-direction: column;
   background-color: ${({theme})=> theme.palette.primary.contrastText };
   border-radius:10px;
   margin-right: ${({last})=> last?0:'10px'};
+  padding-bottom:20px;
   min-height:500px;
   border: 1px solid ${({theme})=> theme.palette.background.line };
+  min-width:80px;
 
+  ${props => props.hide && css`
+    /* min-width:100px; */
+    flex:1;
+    /* max-width:100px; */
+  `}
 
   @media screen and (max-width: 1000px) {
     margin-right: 0;
+    margin-bottom: 20px;
+    min-height:100px;
   }
+
+
 `;
 
 export const Header = styled.div`
@@ -118,7 +134,7 @@ export const CalendarContainer = styled.div`
 
 export const Button = styled.div`
   border-radius: 50px;
-  background: ${({theme})=>theme.palette.primary.mainBlue};
+  background: ${({theme})=>theme.palette.primary.main};
   white-space: nowrap;
   padding: 6px 18px;
   color: ${({theme})=>theme.palette.primary.contrastText};

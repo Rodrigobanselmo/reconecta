@@ -6,7 +6,7 @@ import {Icons} from '../../../../components/Icons/iconsDashboard'
 export const HeaderPage = styled.div`
     display:flex;
     flex-direction:column;
-    align-items:center;
+    align-items:${({center})=>center?'center':'flex-start'};;
     margin-bottom:30px;
 `;
 

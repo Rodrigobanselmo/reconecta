@@ -1,4 +1,4 @@
-import {GetAllUsersCompany} from '../../../services/firestoreUser'
+import {GetAllUsersCompany} from '../../../../services/firestoreUser'
 
 export function onGetAllUsersCompany(user,setUsersRows,setLoadContent,notification,setLoaderDash) {
     function checkSuccess(response) {

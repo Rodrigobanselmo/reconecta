@@ -1,11 +1,11 @@
 import React, {useState,useEffect} from 'react'
 import Modal from './Modal'
-import Header from '../../../components/Dashboard/Components/Blocks/Header'
-import {useNotification} from '../../../context/NotificationContext'
-import {useAuth} from '../../../context/AuthContext'
-import {useLoaderScreen} from '../../../context/LoaderContext'
+import Header from '../../../../components/Dashboard/Components/Blocks/Header'
+import {useNotification} from '../../../../context/NotificationContext'
+import {useAuth} from '../../../../context/AuthContext'
+import {useLoaderScreen} from '../../../../context/LoaderContext'
 import { useLocation } from 'react-router-dom';
-import {useLoaderDashboard} from '../../../context/LoadDashContext'
+import {useLoaderDashboard} from '../../../../context/LoadDashContext'
 import {Container,TableContainer} from './comp'
 
 function Team() {

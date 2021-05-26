@@ -1,4 +1,5 @@
 import NumberFormat from 'react-number-format';
+import MaskedInput from 'react-text-mask';
 
 export function NumberFormatOnly(props) {
     const { inputRef, onChange, ...other } = props;
@@ -22,6 +23,40 @@ export function NumberFormatOnly(props) {
       />
     );
   }
+export function NumberOnly(props) {
+    const { inputRef, onChange, ...other } = props;
+
+    return (
+      <NumberFormat
+        {...other}
+        getInputRef={inputRef}
+        onValueChange={(values) => {
+          onChange({
+            target: {
+              name: props.name,
+              value: values.value,
+            },
+          });
+        }}
+        isNumericString
+      />
+    );
+  }
+
+
+export function RGFormat(props) {
+  const { inputRef, ...other } = props;
+
+  return (
+    <MaskedInput
+      {...other}
+      ref={(ref) => {
+        inputRef(ref ? ref.inputElement : null);
+      }}
+      mask={[/[1-9]/, /\d/, '.', /\d/, /\d/, /\d/,'.', /\d/, /\d/, /\d/,'-', /[A-Za-z0-9]/]}
+    />
+  );
+}
 
 export function NumberFormatCNPJ(props) {
     const { inputRef, onChange, ...other } = props;
@@ -146,9 +181,9 @@ export function NumberFormatCNAE(props) {
             },
           });
         }}
-        format="##.###.###/####-##"
+        format="###.###.###-##"
         isNumericString
-        prefix="$"
+        // prefix="$"
       />
     );
   }

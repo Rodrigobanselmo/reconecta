@@ -11,10 +11,12 @@ import {
 
 export const useStyles = makeStyles((theme) => ({
   appBar: {
-    zIndex: theme.zIndex.drawer + 1,
-    backgroundColor:theme.palette.background.nav,
-    height:70,
-    paddingTop:3,
+    zIndex: theme.zIndex.drawer + 100,
+    backgroundColor:'#fff',
+    // height:70,
+    paddingTop:0,
+    // border:'1px solid red',
+    paddingBottom:-10,
   },
   menuButton: {
     marginRight: 36,

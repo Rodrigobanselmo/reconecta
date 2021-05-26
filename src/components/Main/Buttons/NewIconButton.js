@@ -5,7 +5,7 @@ import styled, {css} from "styled-components";
 
 export const Button = styled.div`
   border-radius: 50px;
-  background: ${({theme})=>theme.palette.primary.mainBlue};
+  background: ${({theme})=>theme.palette.primary.main};
   white-space: nowrap;
   padding: 6px 18px;
   color: ${({theme})=>theme.palette.primary.contrastText};

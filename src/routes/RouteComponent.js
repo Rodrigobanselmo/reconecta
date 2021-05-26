@@ -5,6 +5,7 @@ import {
   HOME_ADMIN,
   DASHBOARD,
   SIGN,
+  REQUEST_ADMIN_DATA
 } from './routesNames'
 // import {useNotification} from "../context/NotificationContext"
 
@@ -16,10 +17,10 @@ export default function RouteComponent({ component: Component,privateRoute, ...r
 
   var locationRedirect = false
 
-  function isAdminRoute() {
+  function isAdminRoute() { //verifica se rota é admin e se for e user nao tiver access admin ele volta pra app e se for admin vai pra adminRoute
     if (rest?.location&&rest.location?.pathname && rest.location.pathname.split('/')[2] && rest.location.pathname.split('/')[2] == 'admin')  {
       if (currentUser?.access && currentUser.access == 'admin') {
-        return true
+        return 'admin'
       } else {
         locationRedirect = DASHBOARD
         return false
@@ -29,17 +30,39 @@ export default function RouteComponent({ component: Component,privateRoute, ...r
         locationRedirect = HOME_ADMIN
         return false
       } else {
+        return 'client'
+      }
+    }
+  }
+
+  function isToInputData(typeOfAccount) {
+    console.log(typeOfAccount,currentUser?.name,rest.location.pathname,REQUEST_ADMIN_DATA)
+    if (typeOfAccount=='admin') {
+      if ((('name' in currentUser && currentUser.name == '')||!currentUser?.name) && rest.location.pathname == REQUEST_ADMIN_DATA) {
+        return true
+      } else if ((('name' in currentUser && currentUser.name == '')||!currentUser?.name) && rest.location.pathname != REQUEST_ADMIN_DATA) {
+        locationRedirect = REQUEST_ADMIN_DATA
+        return false
+      } else if ('name' in currentUser && currentUser.name != '' && rest.location.pathname == REQUEST_ADMIN_DATA) {
+        locationRedirect = HOME_ADMIN
+        return false
+      } else if ('name' in currentUser && currentUser.name != '' && rest.location.pathname != REQUEST_ADMIN_DATA) {
         return true
       }
+    }
+
+    if (typeOfAccount=='client') {
+
     }
   }
 
 
   function onValidate() {
     if (currentUser) {
-      if (!isAdminRoute()) {
-        return false
-      }
+      if (!isAdminRoute()) return false
+      if (!isToInputData(isAdminRoute())) return false
+
+
       return true
     } else {
       locationRedirect = SIGN

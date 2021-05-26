@@ -3,21 +3,20 @@ import styled, {css} from 'styled-components';
 
 export const NavLogoSC = styled(Link)`
   /* color: ${({theme})=> theme.palette.text.contrastWhite}; */
-  color: #fff;
   justify-self: flex-start;
   cursor: pointer;
   font-size: 1.5rem;
+    color: ${({theme})=> theme.palette.text.primary};
   display: flex;
   align-items: center;
   margin-left: 0px;
   font-weight: bold;
   text-decoration: none;
   span {
-    color:${({theme})=> theme.palette.primary.main};
+    color: ${({theme})=> theme.palette.text.primary};
   }
   &:hover {
     /* color: ${({theme})=> theme.palette.text.contrastWhite}; */
-    color: #fff;
     transform: scale(1.02);
     transition: 0.15s ease-out;
     text-decoration: none;
@@ -46,11 +45,11 @@ export const NavLogoSCDiv = styled.div`
   font-weight: bold;
   text-decoration: none;
   span {
-    color:${({theme})=> theme.palette.primary.main};
+    color: ${({theme})=> theme.palette.text.primary};
   }
   &:hover {
     /* color: ${({theme})=> theme.palette.text.contrastWhite}; */
-    color: #fff;
+    /* color: #fff; */
     transform: scale(1.02);
     transition: 0.15s ease-out;
     text-decoration: none;
@@ -64,5 +63,7 @@ export const NavLogoSCDiv = styled.div`
   ${props => props.small === 'true' && css`
     font-size: 1.3rem;
   `}
+
+
 
 `;

@@ -206,11 +206,8 @@ export function SeeIfUserExists(
     .then(function (querySnapshot) {
       let response = [false, false];
       querySnapshot.forEach(function (doc) {
-        const companyId =
-          doc.data() && doc.data()?.company && doc.data().company?.id
-            ? doc.data().company.id
-            : false;
-        if (doc.id !== email) response = [doc.id, companyId];
+        const SeeIfHasBeenAdded = doc.data() && doc.data()?.permissions ? true : false;
+        if (doc.id !== email) response = [doc.id, SeeIfHasBeenAdded];
       });
       checkSuccess(response);
     })

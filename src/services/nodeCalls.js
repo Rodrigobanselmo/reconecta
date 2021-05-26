@@ -1,4 +1,5 @@
 import axios from 'axios';
+import {wordUpper,keepOnlyNumbers,formatCPFeCNPJeCEPeCNAE} from '../helpers/StringHandle'
 
 //const LOCAL = 'http://simplesst/api/nodemailer.com.br'
 const LOCAL = 'http://localhost:3001/api/nodemailer'
@@ -24,23 +25,43 @@ export function NodeSendInviteEmail(data,checkSuccess,checkError) {
 
     const EMAIL = data.email
     const COMPANY = 'Realiza Conecta'
+    console.log('testeNode')
 
     let dataInfo = {
         to: EMAIL,
-        subject:`Convite de participaçao da equipe ${COMPANY}`,
-        html: `<p><b>Seja Ben-vindo</b> a SimpleSST, um lugar que simplifica como você trabalha! <br/>
-        Link de acesso para entrar entra como membro da equipe da emrpesa ${COMPANY} <a href="http://localhost:5000/acesso?email=${EMAIL}">http://localhost:5000/acesso</a></p>
-        <p>Qualquer dúvida, entre em contato./p>`
+        subject:`Convite de participaçao da equipe Reconecta`,
+        html: `<p><b>Seja Bem-vindo</b> a equipe Reconecta, um lugar para te ajudar a se reconectar com sua saúde e objetivos! <br/>
+        <br/>
+        Link de acesso para se cadastrar: <a href="http://localhost:5000/login?email=?email=${EMAIL}">www.realizaconecta.com.br</a></p>
+        <p>Qualquer dúvida, entre em contato.</p>`
     }
 
     console.log('dataInfo',dataInfo)
     console.log('data',data)
 
-    axios.post('http://localhost:3001/api/mail/invite-members',dataInfo).then(res=>{
-        console.log(res)
+    axios.post('https://us-central1-reconecta-dev.cloudfunctions.net/mailer',dataInfo).then(res=>{
+        console.log('res',res)
         checkSuccess(res)
     }).catch((error)=>{
         console.log('error',error)
-        checkError(error)
+        checkError('error',error)
     })
+}
+
+export function SeeIfCEPExists(CNPJ,companyId,checkSuccess,checkError) {
+
+  // var companiesRef = db.collection("company").doc(companyId).collection('companies')
+
+  // console.log(CNPJ)
+  // companiesRef.where("CNPJ", "==", CNPJ).get()
+  // .then(function(querySnapshot) {
+  //     let response = false
+  //     querySnapshot.forEach(function() {
+  //       console.log(9)
+  //         response = true
+  //     })
+  //     checkSuccess(response)
+  //   }).catch((error) => {
+  //     checkError(errorCatch(error))
+  // });
 }

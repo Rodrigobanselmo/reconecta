@@ -7,6 +7,7 @@ export const FormContainer = styled(Form)`
   display: flex;
   flex-wrap: wrap;
   width: 100%;
+  color: ${({theme})=> theme.palette.text.primary};
 `;
 
 export const HeaderForm = styled.div`

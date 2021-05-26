@@ -137,7 +137,7 @@ export const ContainerWeekdays = styled.div`
   }
 
   ${props => props.today && css`
-    background-color: ${({theme})=> theme.palette.primary.mainBlue };
+    background-color: ${({theme})=> theme.palette.primary.main };
     color: ${({theme})=> theme.palette.primary.contrastText };
   `}
 `;
@@ -192,7 +192,7 @@ export const CalendarContainer = styled.div`
 
 export const Button = styled.div`
   border-radius: 50px;
-  background: ${({theme})=>theme.palette.primary.mainBlue};
+  background: ${({theme})=>theme.palette.primary.main};
   white-space: nowrap;
   padding: 6px 18px;
   color: ${({theme})=>theme.palette.primary.contrastText};

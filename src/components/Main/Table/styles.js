@@ -21,7 +21,7 @@ padding:17px 10px;
 border-radius: 8px;
 font-size:15px;
 color: ${({theme})=>theme.palette.type!== 'dark'? theme.palette.primary.contrastText: theme.palette.primary.main };
-background-color: ${({theme})=> theme.palette.type!== 'dark'? lighten(theme.palette.primary.main,0.1):'transparent' };
+background-color: ${({theme})=> theme.palette.primary.main};
 /* background-color: ${({theme})=> theme.palette.type!== 'dark'? lighten(theme.palette.status.success,0.1):'transparent' }; */
 border-color: ${({theme})=> theme.palette.background.line };
 border-width: 1px;

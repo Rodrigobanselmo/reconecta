@@ -3,7 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import styled, {css} from "styled-components";
-import {Icons} from '../../../../components/Icons/iconsDashboard'
+import {Icons} from '../../../../../components/Icons/iconsDashboard'
 import TextField from '@material-ui/core/TextField';
 
 export const HeaderPage = styled.div`
@@ -119,7 +119,7 @@ export const InputEmail = withStyles((theme) => ({
     root: {
         border: `1px ${theme.palette.background.line} solid`,
         color: theme.palette.text.contrastWhite,
-        marginBottom:10,        
+        marginBottom:10,
     },
 }))((props) => <TextField {...props} />);
 

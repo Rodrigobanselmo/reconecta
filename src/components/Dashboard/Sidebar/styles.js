@@ -7,7 +7,7 @@ const paddingSubItemPlus = 20;
 
 export const useStyles = makeStyles((theme) => ({
   drawer: {
-    backgroundColor:theme.palette.background.drawer,
+    backgroundColor:'#fff',
     width: drawerWidth,
     flexShrink: 0,
     whiteSpace: 'nowrap',
@@ -305,7 +305,7 @@ export const useStyles = makeStyles((theme) => ({
     borderWidth:1,
     backgroundColor: theme.palette.type =='dark' ?theme.palette.background.default :theme.palette.background.drawer,
     margin:'10px 10px',
-    marginTop:85,
+    // marginTop:85,
     marginBottom:-7,
     transition: theme.transitions.create('background-color', {
       duration: 600,
@@ -344,5 +344,9 @@ export const useStyles = makeStyles((theme) => ({
   inputInput: {
     paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
     color: theme.palette.text.primary,
+  },
+  menuButton: {
+    margin: 'auto',
+    color: theme.palette.text.primaryNav,
   },
 }));

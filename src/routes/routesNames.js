@@ -5,5 +5,6 @@ export const HOME_ADMIN = `${ADMIN}/home`;
 export const CALENDAR_ADMIN = `${ADMIN}/calendar`;
 export const TEAM = `${ADMIN}/equipe`;
 export const SIGN = '/login';
+export const REQUEST_ADMIN_DATA = `/request/admin/data`;
 // export const NO_AUTH = '/sem-autenticacao';
 // export const GET_USER_DATA = `${SIGN}/insercao-de-dados`;

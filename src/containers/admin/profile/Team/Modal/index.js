@@ -1,12 +1,12 @@
 import React, {useState, useEffect,useMemo} from 'react';
 import AddModal from './comp'
 import LinearProgress from '@material-ui/core/LinearProgress';
-import {userTypes,headCells,rows} from '../../../../constants/userTypes'
-import {useNotification} from '../../../../context/NotificationContext'
-import {useLoaderScreen} from '../../../../context/LoaderContext'
-import { useAuth } from '../../../../context/AuthContext'
-import {ModalInfo} from '../../../../components/Main/Modal/ModalInfo'
-import Carrousel from '../../../../components/Main/Carrousel/CarrouselFirst'
+import {userTypes,headCells,rows} from '../../../../../constants/userTypes'
+import {useNotification} from '../../../../../context/NotificationContext'
+import {useLoaderScreen} from '../../../../../context/LoaderContext'
+import { useAuth } from '../../../../../context/AuthContext'
+import {ModalInfo} from '../../../../../components/Main/Modal/ModalInfo'
+import Carrousel from '../../../../../components/Main/Carrousel/CarrouselFirst'
 import {onCreatePendingUser,onCheckUser} from './func'
 
 export default function Modal({open,setOpen,setUsersRows}) {

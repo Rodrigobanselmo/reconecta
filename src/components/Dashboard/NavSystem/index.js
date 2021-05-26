@@ -85,13 +85,13 @@ export default function NavBar({open,setOpen}) {
 
   return (
       <AppBar
-        elevation={5}
+        elevation={2}
         position="fixed"
         className={clsx(classes.appBar, {
           [classes.appBarShift]: open,
         })}
       >
-        <Toolbar>
+        <Toolbar style={{backgroundColor:themes.palette.background.nav}}>
           <IconButton
             color="inherit"
             aria-label="open drawer"
