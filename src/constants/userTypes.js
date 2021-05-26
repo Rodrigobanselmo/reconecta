@@ -42,13 +42,13 @@ export const userTypesw = [
 
 export const userTypes = [
   { name: 'Administrador',icon:'Admin',access:'admin'},
-  { name: 'Educadores Físicos',icon:'Person',access:'edu'},
-  { name: 'Enfereiros',icon:'Person',access:'enf'},
-  { name: 'Farmacêuticos',icon:'Person',access:'far'},
+  { name: 'Educador Físico',icon:'Person',access:'edu'},
+  { name: 'Enfereiro',icon:'Person',access:'enf'},
+  { name: 'Farmacêutico',icon:'Person',access:'far'},
   { name: 'Fisoterapeuta',icon:'Person',access:'fisio'},
   { name: 'Fonoaudiólogo',icon:'Person',access:'fono'},
   { name: 'Médico',icon:'Person',access:'nutri'},
-  { name: 'Naturopatas',icon:'Person',access:'natu'},
+  { name: 'Naturopata',icon:'Person',access:'natu'},
   { name: 'Nutricionista',icon:'Person',access:'nutri'},
   { name: 'Psicólogo',icon:'Person',access:'pisc'},
   { name: 'Psicopedagogo',icon:'Person',access:'gogo'},
