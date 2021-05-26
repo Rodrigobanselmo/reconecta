@@ -32,7 +32,7 @@ export function NodeSendInviteEmail(data,checkSuccess,checkError) {
         subject:`Convite de participaçao da equipe Reconecta`,
         html: `<p><b>Seja Bem-vindo</b> a equipe Reconecta, um lugar para te ajudar a se reconectar com sua saúde e objetivos! <br/>
         <br/>
-        Link de acesso para se cadastrar: <a href="http://localhost:5000/login?email=?email=${EMAIL}">www.realizaconecta.com.br</a></p>
+        Link de acesso para se cadastrar: <a href="https://reconecta.netlify.app/login?email=${EMAIL}">www.realizaconecta.com.br</a></p>
         <p>Qualquer dúvida, entre em contato.</p>`
     }
 
