@@ -16,6 +16,8 @@ const PagesDiv = styled.div`
   align-items: center;
   max-width: 800px;
   margin: auto;
+  overflow-y:auto;
+  max-height:80vh;
 
   @media screen and (min-width: 800px) {
     min-width: 400px
@@ -33,11 +35,45 @@ const engineryData = {data:'',name:'CREA',status:'OK',message:'',placeholder:'CR
 const doctorData = {data:'',name:'CRM',status:'OK',message:'',placeholder:'CRM'}
 const nurseData = {data:'',name:'COREN',status:'OK',message:'',placeholder:'COREN'}
 
+const finalData = {
+  "uf": "SP",
+  "nome": "rodrigo barbosa",
+  "cpf": "401.951.858-03",
+  "rg": "39.602.612-6",
+  "cell": "(12) 99999-9999",
+  "facebook": "",
+  "instagram": "",
+  "complemento": "",
+  "logradouro": "Rua Heitor Vieira Júnior",
+  "municipio": "São José dos Campos",
+  "bairro": "Altos do Esplanada",
+  "cep": "12246013",
+  "address": {
+    "cep": "12.246-013",
+    "rua": "Rua Heitor Vieira Júnior",
+    "bairro": "Altos do Esplanada",
+    "numero": "12",
+    "complemento": "400",
+    "municipio": "São José dos Campos"
+  },
+  "Médico-CRM": "12345",
+  "profession": [
+    {
+      "activit": "Opção 1 Educador Físico",
+      "profession": "Educador Físico"
+    },
+    {
+      "activit": "Opção 1 Médico",
+      "profession": "Médico"
+    }
+  ]
+}
+
 export default function InputUserData() {
 
     const [data, setData] = useState([...initialData])
     const [infoModal, setInfoModal] = useState({title:'Você tem certeza?',text:'Ao sair você irá pausar sua inscrição e poderá perder as informaçoes inseridas até o momento.'}) //para mandar pro modalFullScreen e dizer se ao fechar da um alerta
-    const [position, setPosition] = useState(3)
+    const [position, setPosition] = useState(1)
     const [checked, setChecked] = useState(false);
     const [unform, setUnform] = useState({uf:'AC'})
 
@@ -45,20 +81,20 @@ export default function InputUserData() {
     const {setLoad} = useLoaderScreen();
     const notification = useNotification();
 
-    useEffect(() => {
-        if (currentUser && currentUser?.type) {
-            const dt = [...initialData]
-            if (currentUser.type === 'Engenheiro de Segurança') dt.push(engineryData)
-            if (currentUser.type === 'Médico do Trabalho') dt.push(doctorData)
-            if (currentUser.type === 'Enfermeiro do Trabalho') dt.push(nurseData)
-            setData([...dt])
-        } else {
-            setData([...initialData])
-        }
-    }, [])
+    // useEffect(() => {
+    //     if (currentUser && currentUser?.type) {
+    //         const dt = [...initialData]
+    //         if (currentUser.type === 'Engenheiro de Segurança') dt.push(engineryData)
+    //         if (currentUser.type === 'Médico do Trabalho') dt.push(doctorData)
+    //         if (currentUser.type === 'Enfermeiro do Trabalho') dt.push(nurseData)
+    //         setData([...dt])
+    //     } else {
+    //         setData([...initialData])
+    //     }
+    // }, [])
 
     function onAddData() {
-        onAddUserData({data,currentUser,setCurrentUser,setLoad,notification})
+        onAddUserData({unform,currentUser,setCurrentUser,setLoad,notification})
     }
 
     function onFirstForm(dataForm) {
@@ -96,7 +132,6 @@ export default function InputUserData() {
                           subText='Informe seu endereço para prosseguir'
                         />
                         <Page.SecondForm unform={unform} setUnform={setUnform} onSecondForm={onSecondForm}/>
-                        {/* <Page.Continue data={data} setInfoModal={setInfoModal} notification={notification} setPosition={setPosition}/> */}
                     </div>
                 </PagesDiv>
                 <PagesDiv >
@@ -106,14 +141,13 @@ export default function InputUserData() {
                           subText='Informe seus dados profissionais para prosseguir'
                         />
                         <Page.ThirdForm notification={notification} unform={unform} setUnform={setUnform} onThirdForm={onThirdForm}/>
-                        {/* <Page.Continue data={data} setInfoModal={setInfoModal} notification={notification} setPosition={setPosition}/> */}
                     </div>
                 </PagesDiv>
                 <div style={{display:'flex',flexDirection:'column',alignItems:'center',maxWidth:850,margin:'auto'}}>
                     <div style={{alignItems:'center',display:'flex',flexDirection:'column',margin:'0px 20px'}}>
                         <Page.Header second/>
                         <Page.Politics setChecked={setChecked} checked={checked} />
-                        <Page.Continue checked={checked} second setPosition={setPosition} onAddData={onAddData} position={position}/>
+                        <Page.Continue checked={checked} onAddData={onAddData}/>
                     </div>
                 </div>
             </Carrousel>

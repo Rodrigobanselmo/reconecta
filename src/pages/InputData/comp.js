@@ -90,94 +90,18 @@ PageWrapper.Header =  function Header(props) {
   )
 }
 
-PageWrapper.Input =  function EmailInput({setData,data}) {
-
-  const inputChange = (index) => (event) => {
-    console.log(event.target.value)
-    let allData = [...data]
-    if(index===2) {
-        if(TotalNumVerification(event.target.value,11)) {
-            allData[index] = {...allData[index],data:event.target.value, status:'OK'}
-        } else (
-            allData[index] = {...allData[index],data:event.target.value, status:'none'}
-        )
-    } else {
-        if(event.target.value.length<1) {
-            allData[index] = {...allData[index],data:event.target.value, status:'none'}
-        } else (
-            allData[index] = {...allData[index],data:event.target.value, status:'OK'}
-        )
-    }
-    setData(allData)
-  }
-
-  const check = (index,value) => {
-    let allData = [...data]
-    if(index===2) {
-        if(TotalNumVerification(value,11)) {
-            allData[index] = {...allData[index], status:'OK'}
-        } else (
-            allData[index] = {...allData[index], status:'Warn',message:'CPF com formatação inválida'}
-        )
-    } else if (allData[index]?.required && allData[index].required) {
-        if(value.length<1) {
-            allData[index] = {...allData[index], status:'Warn',message:'Este campo não pode ser nulo'}
-        } else (
-            allData[index] = {...allData[index], status:'OK'}
-        )
-    }
-    setData(allData)
-  }
-
-  return(
-    <InputsContainer>
-      {data.map((item,index)=>(
-        <Input
-            key={index}
-            status={item?.status && item.status}
-            icon={item?.status && item.status}
-            required={item?.required?item.required:false}
-            onBlur={({target})=>check(index,target.value)}
-            onChange={inputChange(index)}
-            size={'small'}
-            inputProps={{style: {textTransform: 'capitalize'}}}
-            label={item.name}
-            title={item.message}
-            placeholder={item.placeholder}
-            variant="outlined"
-            validation={(item && item?.status && (item.status === 'Check' || item.status === 'Warn' || item.status === 'Load'))}
-        />
-      ))}
-    </InputsContainer>
-  )
-}
-
-PageWrapper.Continue =  function Continue({data,setPosition,second,onAddData,checked,position=false}) {
+PageWrapper.Continue =  function Continue({onAddData,checked}) {
 
   function disable() {
-
     let resp = false
-    if (position) {
       resp = checked?false : true
-    } else {
-      data?.map((item)=>{
-        if (item.status !== 'OK' && item.status !== 'Check') resp = true
-      })
-    }
     return resp
   }
 
-  function onClickContinue() {
-    setPosition(2)
-  }
 
   return(
-    <ContinueButton primary={'true'} onClick={second?onAddData:onClickContinue} size={'medium'} disable={`${disable()}`}>
-      {second ?
+    <ContinueButton primary={'true'} onClick={onAddData} size={'medium'} disable={`${disable()}`}>
       <p>Confirmar</p>
-      :
-      <p>Continuar</p>
-      }
     </ContinueButton>
   )
 }
@@ -220,7 +144,7 @@ PageWrapper.FirstForm =  function InputLast({setUnform,unform}) {
   const formRef = React.useRef()
 
   const validation = Yup.object({
-    nome: Yup.string().required('Nome não pode estar em branco.'),
+    name: Yup.string().required('Nome não pode estar em branco.'),
     cpf: Yup.string().trim().length(14,'CPF incompleto').required('CPF não pode estar em branco.'),
     rg: Yup.string().trim().length(12,'RG incompleto').required('RG não pode estar em branco.'),
     cell: Yup.string().trim().length(15,'Número de celular incompleto').required('Número de celular não pode estar em branco.'),
@@ -252,7 +176,7 @@ PageWrapper.FirstForm =  function InputLast({setUnform,unform}) {
       >
         <InputUnform
           width={'100%'}
-          name={'nome'}
+          name={'name'}
           labelWidth={120}
           label={'Nome Completo'}
           status={'Normal'}
@@ -285,7 +209,7 @@ PageWrapper.FirstForm =  function InputLast({setUnform,unform}) {
           label={'WhatsApp'}
           statusStart={'WhatsApp'}
           variant="outlined"
-          inputProps={{placeholder:'(00) 00000-0000',style: {color:'#000'}}}
+          inputProps={{placeholder:'(__) _____-____',style: {color:'#000'}}}
           iconStart={'WhatsApp'}
           inputComponent={NumberFormatCell}
         />
@@ -342,6 +266,7 @@ PageWrapper.SecondForm =  function InputLast({setUnform,unform,onSecondForm}) {
     try {
       await validation.validate(formData, { abortEarly: false })
       onSecondForm({...unform,...formData})
+      window.scrollTo(0, 0);
       console.log('submitted: ', formData)
     } catch (error) {
       console.log('error',error);
@@ -499,19 +424,24 @@ PageWrapper.ThirdForm =  function InputLast({setUnform,notification,unform,onThi
 
   const handleSubmit = React.useCallback(async (formData) => {
 
-    var object = {}
+    var arrayError = []
     Object.keys(formData).map(key=>{
-      object[key] = Yup.string().required(`${key.split('-')[1]} não pode estar em branco.`)
+      if (formData[key] == '') arrayError.push(key)
     })
 
+    if (arrayError.length>0) return notification.warn({message:`${arrayError[0].split('-')[1]} não pode estar em branco.`})
+
     formRef.current.setErrors({
-      ...object
     })
-    if (activities.length == 0) return notification.warn({message:'Selecione ao menos uma atividade para continuar.'})
+
+    if (profession.length == 0) return notification.warn({message:'Selecione ao menos uma profissão.'})
+    if (activities.length == 0) return notification.warn({message:'Selecione ao menos uma atividade de cada profissão.'})
+    if (activities.filter((i,index)=>activities.findIndex(fi=>fi.profession==i.profession)==index).length < profession.length ) return notification.warn({message:'Selecione ao menos uma atividade de cada profissão.'})
+
     try {
       await validation.validate(formData, { abortEarly: false })
-      onThirdForm({...unform,...formData})
-      console.log('submitted: ', formData)
+      onThirdForm({...unform,...formData,profession:activities})
+      console.log('submitted: ', formData,activities)
     } catch (error) {
       console.log('error',error);
       const errors = {}
@@ -527,27 +457,28 @@ PageWrapper.ThirdForm =  function InputLast({setUnform,notification,unform,onThi
   const handleChangeProffesion = (event,item) => {
     if (!event.target.checked) {
       setProfession(profession=>[...profession.filter(i=>i!=item)])
+      setActivities(activitie=>[...activitie.filter(i=>i.profession!=item)])
     } else {
       setProfession(profession=>[...profession,item])
     }
   };
 
-  const handleChangeActivities = (event,item) => {
+  const handleChangeActivities = (event,activit,profession) => {
     if (!event.target.checked) {
-      setActivities(activitie=>[...activitie.filter(i=>i!=item)])
+      setActivities(activitie=>[...activitie.filter(i=>i.activit!=activit&&i.profession!=profession)])
     } else {
-      setActivities(activitie=>[...activitie,item])
+      setActivities(activitie=>[...activitie,{activit,profession}])
     }
   };
 
   const onAddActivit = () => {
     const index = data.findIndex(i=>i.name==open)
-    if (profession[index].activities.includes(newActivit)) return notification.error({message:'Essa atividade já existe.'})
+    if (data[index].activities.includes(newActivit)) return notification.error({message:'Essa atividade já existe.'})
 
     var newData = {...data}
     const newActivities = [...data[index].activities,newActivit]
     newData[index].activities = [...newActivities]
-    setData([...newData])
+    setData({...newData})
   };
 
 
@@ -597,7 +528,7 @@ PageWrapper.ThirdForm =  function InputLast({setUnform,notification,unform,onThi
                       width={'100%'}
                       // defaultValue={unform.logradouro}
                       name={`${item.name}-${label}`}
-                      labelWidth={75}
+                      labelWidth={45}
                       label={label}
                       variant="outlined"
                       inputComponent={NumberOnly}
@@ -611,9 +542,9 @@ PageWrapper.ThirdForm =  function InputLast({setUnform,notification,unform,onThi
                       <div style={{display:'flex',flexDirection:'row',margin:'0 0 10px 26px'}}>
                         <Checkbox
                           style={{margin:0,padding:'0 6px 0 0'}}
-                          checked={activities.includes(activit)}
+                          checked={activities.findIndex(i=>i.activit == activit&&i.profession == item.name) != -1}
                           size='small'
-                          onChange={(event)=>handleChangeActivities(event,activit)}
+                          onChange={(event)=>handleChangeActivities(event,activit,item.name)}
                           name={activit}
                           color="primary"
                         />

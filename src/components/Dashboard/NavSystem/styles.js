@@ -56,7 +56,7 @@ export const useStyles = makeStyles((theme) => ({
   },
   profileCircleName: {
     fontWeight:'600',
-    color:theme.palette.text.primaryNav
+    color:theme.palette.primary.contrastText
   },
   divName: {
     marginTop:8,
