@@ -4,7 +4,9 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { db } from '../lib/firebase.prod.js';
+import { db, st } from '../lib/firebase.prod.js';
+import {v4} from "uuid";
+
 
 export const errorCatch = (error) => {
   let errorMessage = error;
@@ -35,40 +37,42 @@ export function CreatePendingUser(
   const date = new Date();
   const batch = db.batch();
   data.array.map((item) => {
+    const unform = data.unform[item.email]?data.unform[item.email]:{}
+    console.log('unform',unform)
     if (item?.id && item.id) {
       const pendingUsers = db.collection('users').doc(item.id);
       batch.update(pendingUsers, {
-        type: item.type,
+        // type: item.type,
         creation: { start: date - 1, end: 0 },
         status: 'Ativo',
-        access: item.access,
-        permissions: item.access,
-        image: item.icon,
+        access: 'admin',
+        permissions: ['et'],
+        ...unform
       });
     } else {
       const pendingUsers = db.collection('users').doc(item.email);
       batch.set(pendingUsers, {
         email: item.email,
-        type: item.type,
+        // type: item.type,
         creation: { start: date - 1, end: 0 },
         status: 'Aguardando Autenticação',
         access: 'admin',
-        permissions: item.access,
+        permissions: ['et'],
         name: '',
-        image: item.icon,
-        uid: '',
+        uid: v4(),
+        ...unform
       });
     }
     array.push({
       email: item.email,
-      type: item.type,
+      // type: item.type,
       creation: date,
       status: 'Aguardando Autenticação',
       access: 'admin',
-      permissions: item.access,
+      permissions: ['et'],
       name: '',
-      image: item.icon,
-      uid: '',
+      uid: v4(),
+      ...unform
     });
   });
 
@@ -89,17 +93,54 @@ export function AddUserData(
   checkError,
 ) {
   const userRef = db.collection('users').doc(uid);
+  const professionRef = db.collection('data').doc('professions');
 
-  userRef
-    .update({
-      ...data,
-    })
-    .then(() => {
+  var batch = db.batch();
+  let DATA  = {}
+
+  if (data?.profession ) { //|| (data?.permissions && data.permissions.includes('ec'))
+    professionRef.get().then(function(docSnapshots) {
+      if (docSnapshots.exists) {
+        DATA = {...docSnapshots.data()}
+      }
+      batchCreate()
+
+    }).catch((error) => {
+      checkError(errorCatch(error))
+    });
+  }
+
+  if (!data?.profession) batchCreate()
+
+  function batchCreate() {
+
+    batch.update(userRef,{...data})
+    if (data?.profession) batch.set(professionRef,{...DATA,[uid]:{...data.profession}})
+
+    batch.commit().then(() => {
       checkSuccess('Document successfully updated!');
+    }).catch((error) => {
+      checkError(errorCatch(error));
+      console.error('Error updating document: ', error);
+    });
+  }
+}
+
+export function GetUser(
+  uid,
+  checkSuccess,
+  checkError,
+) {
+  const usersRef = db.collection('users').doc(uid);
+  usersRef
+    .get()
+    .then((docSnapshot) => {
+      if (docSnapshot.exists) {
+        checkSuccess(docSnapshot.data());
+      } else checkError('Usuário não encontrado.');
     })
     .catch((error) => {
       checkError(errorCatch(error));
-      console.error('Error updating document: ', error);
     });
 }
 
@@ -241,4 +282,55 @@ export function GetAllUsersCompany(
     .catch((error) => {
       checkError(errorCatch(error));
     });
+}
+
+export function UpdateProfile(
+  image,
+  uid,
+  checkSuccess,
+  checkError,
+) {
+  st.ref(`profile/${uid}`).put(image).then(() => {
+    setTimeout(() => {
+      st.ref("profile").child(`${uid}_300x300`).getDownloadURL().then(url => {
+        checkSuccess(url);
+      }).catch((error) => {
+        checkError(errorCatch(error));
+      });
+    }, 3000);
+    setTimeout(() => {
+      st.ref("profile").child(`${uid}_300x300`).getDownloadURL().then(url => {
+        checkSuccess(url,true);
+      }).catch((error) => {
+        checkError(errorCatch(error));
+      });
+    }, 8000);
+  }).catch((error) => {
+    checkError(errorCatch(error));
+  });
+
+
+
+  // uploadTask.on(
+  //   "state_changed",
+  //   snapshot => {
+  //     const progress = Math.round(
+  //       (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+  //     );
+  //     setProgress(progress);
+  //   },
+  //   error => {
+  //     console.log(error);
+  //   },
+  //   () => {
+  //     storage
+  //       .ref("images")
+  //       .child(image.name)
+  //       .getDownloadURL()
+  //       .then(url => {
+  //         setUrl(url);
+  //       });
+  //   }
+  // );
+
 }

@@ -21,10 +21,9 @@ const errorCatch = (error) => {
     return errorMessage
   }
 
-export function NodeSendInviteEmail(data,checkSuccess,checkError) {
+export function NodeSendInviteEmail(email,checkSuccess,checkError) {
 
-    const EMAIL = data.email
-    const COMPANY = 'Realiza Conecta'
+    const EMAIL = email
     console.log('testeNode')
 
     let dataInfo = {
@@ -37,11 +36,9 @@ export function NodeSendInviteEmail(data,checkSuccess,checkError) {
     }
 
     console.log('dataInfo',dataInfo)
-    console.log('data',data)
 
     axios.post('https://us-central1-reconecta-dev.cloudfunctions.net/mailer',dataInfo).then(res=>{
-        console.log('res',res)
-        checkSuccess(res)
+        checkSuccess(email)
     }).catch((error)=>{
         console.log('error',error)
         checkError('error',error)

@@ -15,7 +15,9 @@ export function ModalButtons({
             children,
             onContextMenu,
             padding,
-            dontCloseOnConfirm
+            dontCloseOnConfirm,
+            extraBnt,
+            extraOnClick
         })
     {
 
@@ -31,6 +33,12 @@ export function ModalButtons({
     if (onClose && !dontCloseOnConfirm) onClose()
   }
 
+  function onExtra(event) {
+    event && event?.preventDefault && event.preventDefault();
+    if (extraOnClick) extraOnClick()
+    if (onClose && !dontCloseOnConfirm) onClose()
+  }
+
   return (
     <ModalMui open={open} padding={padding} onClose={onCloseModal} title={title}>
       <div style={{maxHeight:'80vh',overflow:'auto'}}>
@@ -38,6 +46,7 @@ export function ModalButtons({
             {children}
         </div>
         <div style={{marginTop:27,flexDirection: buttonDirection === 'normal' ? 'row':'row-reverse',display:'flex', alignItems: 'center', justifyContent: buttonDirection === 'normal' ? 'flex-end':'flex-start',width:'100%'}}>
+          {extraBnt && <ContinueButton  onClick={onExtra} style={{  marginRight:'auto'}} >{extraBnt}</ContinueButton>}
           <CancelButton  onClick={onCloseModal} style={{  marginRight:buttonDirection === 'normal'?'15px':0}} variant="outlined" >{leftBnt}</CancelButton>
           <ContinueButton disable={`${disable}`} primary={'true'} onClick={onAction} style={{  marginRight:buttonDirection === 'normal'?'0px':'15px'}} >{rightBnt}</ContinueButton>
         </div>

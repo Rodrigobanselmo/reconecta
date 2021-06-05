@@ -1,7 +1,7 @@
 import NumberFormat from 'react-number-format';
 import MaskedInput from 'react-text-mask';
 
-export function NumberFormatOnly(props) {
+export function NumberFormatOnly(props) { //somente inteiros
     const { inputRef, onChange, ...other } = props;
 
     return (
@@ -19,6 +19,29 @@ export function NumberFormatOnly(props) {
         thousandSeparator={'.'}
         decimalSeparator={','}
         decimalScale={0}
+        isNumericString
+      />
+    );
+  }
+
+export function NumberMoney(props) {
+    const { inputRef, onChange, ...other } = props;
+
+    return (
+      <NumberFormat
+        {...other}
+        getInputRef={inputRef}
+        onValueChange={(values) => {
+          onChange({
+            target: {
+              name: props.name,
+              value: values.value,
+            },
+          });
+        }}
+        thousandSeparator={'.'}
+        decimalSeparator={','}
+        decimalScale={2}
         isNumericString
       />
     );
@@ -42,7 +65,6 @@ export function NumberOnly(props) {
       />
     );
   }
-
 
 export function RGFormat(props) {
   const { inputRef, ...other } = props;

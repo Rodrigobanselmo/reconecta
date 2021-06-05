@@ -1,38 +1,70 @@
 import React, {useState} from 'react';
-import PropTypes from 'prop-types';
-import clsx from 'clsx';
-import { lighten, makeStyles,withStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
-import TableSortLabel from '@material-ui/core/TableSortLabel';
 import {Icons} from '../../../../../components/Icons/iconsDashboard';
-import {
-  InputEmail,
-  Container,
-  HeaderPage,
-  Title,
-  EmailContainer,
-  SubTitle,
-  TypeContainer,
-/*   ContinueButton, */
-  Icon,
-  AddAnother,
-} from './style';
+import {InputEmail,EmailContainer,TypeContainer,Icon,AddAnother} from './style';
 import {ModalMui, ModalFullScreen} from '../../../../../components/Main/MuiHelpers/Modal'
 import {BootstrapTooltip} from '../../../../../components/Main/MuiHelpers/Tooltip'
+import IconButton from '../../../../../components/Main/MuiHelpers/IconButton';
 import RichSelect from '../../../../../components/Dashboard/Components/MultUsage/RichSelect'
 import useTimeOut from '../../../../../hooks/useTimeOut';
 import {EmailVerification} from '../../../../../helpers/StringVerification';
 import {ContinueButton} from '../../../../../components/Main/MuiHelpers/Button'
 import {UserContainer,UserAvatar,GroupIcon,TextNameEmail} from '../../../../../components/Dashboard/Components/Standard/Avatar'
-import Input from '../../../../../components/Main/MuiHelpers/Input'
+import Input, {InputEnd,InputUnform,SelectedEnd} from '../../../../../components/Main/MuiHelpers/Input'
+import Checkbox from '@material-ui/core/Checkbox';
+import {HeaderPage,Page,Container,InputsContainer,Title,SubTitle,IconCloseFull,IconGoBackFull} from '../../../../../components/Dashboard/Components/Standard/PageCarousel'
+import {HeaderForm,FormContainer,SubTitleForm,TitleForm,DividerForm,AddAnotherForm,ButtonForm} from '../../../../../components/Dashboard/Components/Form/comp'
+import {NumberFormatCNPJ,NumberOnly,RGFormat,NumberFormatOnly,NumberFormatCEP, NumberFormatCPF,NumberFormatTel,NumberFormatCell} from '../../../../../lib/textMask'
+import {ModalButtons} from '../../../../../components/Main/MuiHelpers/ModalButtons'
+import * as Yup from 'yup'
+import {estados} from '../../../../../constants/geral'
+import NewTabs, {TabPanel} from '../../../../../components/Main/MuiHelpers/NewTabs'
+import { ProfessionForm, UserForm,AddressForm, BankForm, PermissionForm } from './form'
+import styled from "styled-components";
+import { useSelector,useDispatch } from 'react-redux'
+
+const ButtonEditar = styled.div`
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    opacity:0.7;
+    text-decoration: underline;
+    /* filter: brightness(0.95); */
+  }
+
+  &:active {
+    opacity:0.5;
+    /* filter: brightness(0.95); */
+  }
+
+`;
 
 
+const AddButtonActivitie = styled.div`
+  margin:5px auto 20px 26px;
+  padding:0px 10px 2px;
+  display:inline-block;
+  border-radius:10px;
+  border: 1px solid ${({theme})=> theme.palette.background.line};
+  background-color: ${({theme})=> theme.palette.primary.mainBlue};
+  cursor: pointer;
+  span {
+    margin:0;
+    padding:0;
+    font-size:12px;
+    color: ${({theme})=>theme.palette.primary.contrastText};
+  }
+
+  &:hover {
+    opacity:0.7;
+    /* filter: brightness(0.95); */
+  }
+
+  &:active {
+    opacity:0.8;
+    /* filter: brightness(0.95); */
+  }
+`;
 
 export default function AddModal({children, ...restProps }) {
     return (
@@ -46,24 +78,15 @@ export default function AddModal({children, ...restProps }) {
 
 AddModal.Header =  function Header(props) {
   return(
-    <HeaderPage className={'center'}>
-      {props.second ?
-      <>
-        <Title>Definir permissões</Title>
-        <SubTitle>Defina o tipo dos novos usuários e quais serão suas permissões de uso da plataforma.</SubTitle>
-      </>
-      :
-      <>
-        <Title>Adicionar Novo Usuários</Title>
-        <SubTitle>Você poderá mudar as permissões dos novos usuários na proxima sessão</SubTitle>
-      </>
-    }
+    <HeaderPage center={props.center} >
+        <Title>{props.text}</Title>
+        {props.subText && <SubTitle>{props.subText}</SubTitle>}
     </HeaderPage>
 
   )
 }
 
-AddModal.Type =  function Type(props) {
+export function Type(props) {
 
   const types = [];
   props.userTypes.sort().map((item)=>{
@@ -89,7 +112,13 @@ AddModal.Type =  function Type(props) {
             </UserAvatar>
             <TextNameEmail style={{textTransform:'lowercase'}} >{user.email}</TextNameEmail>
         </UserContainer>
-        <RichSelect setSelected={(type)=>setSelected(user,type)} selected={user.type !=='' ? user.type : 'Selecione'} attention dataToSelect={types}/>
+        <ButtonEditar onClick={()=>props.onEditForm(user.email)}>
+          <span>
+            editar
+          </span>
+          <Icons style={{fontSize:20}} type={'KeyboardArrowRightIcon'} />
+        </ButtonEditar>
+        {/* <RichSelect setSelected={(type)=>setSelected(user,type)} selected={user.type !=='' ? user.type : 'Selecione'} attention dataToSelect={types}/> */}
       </TypeContainer>
       ))}
     </div>
@@ -172,5 +201,73 @@ AddModal.Continue =  function Continue({disable,setPosition,setInfoModal,second,
       <p>Continuar</p>
       }
     </ContinueButton>
+  )
+}
+
+export function Form({setUnform,notification,unform,onForm,editEmail}) {
+
+  const [tabValue, setTabValue] = React.useState(0);
+  const tabsLabel = ['Permissões','Dados Pessoais','Dados de Endereço','Dados Bancário','Dados Profissionais']
+  const [banks, setBanks] = useState([])
+  const dispatch = useDispatch()
+  const save = useSelector(state => state.save)
+
+  const unformEmail = unform[editEmail]?unform[editEmail]:{}
+  console.log(unformEmail,unformEmail?.address)
+
+  const onSaveUser = (unformData) => {
+    console.log('unformEmail',{...unform,[editEmail]:{...unform[editEmail],...unformData}})
+    dispatch({ type: 'SAVE', payload: false })
+    setUnform({...unform,[editEmail]:{...unform[editEmail],...unformData}})
+    notification.success({message:'Dados salvos com sucesso!'})
+  }
+
+  const onTabChange = (value) => {
+    if (save) notification.modal({title: '',text:'Você possui dados não salvos, tem certeza que deseja sair mesmo assim? Os dados inseridos serão perdidos.',rightBnt:'Sair sem salvar',open:true,onClick:()=>{
+      dispatch({ type: 'SAVE', payload: false })
+      setTabValue(value)
+    }})
+    else setTabValue(value)
+  }
+
+  return(
+    <NewTabs tabStayle={{minWidth: 120}} tabValue={tabValue} onChange={onTabChange} tabsLabel={tabsLabel} >
+      <TabPanel key={0} value={tabValue} index={0} >
+        <HeaderPage style={{margin:'20px 0px'}}>
+          <p style={{fontSize:18}}>Selecione as permissões de usuário.</p>
+        </HeaderPage>
+        <PermissionForm notification={notification} unform={unformEmail} onForm={onSaveUser} dispatch={dispatch} save={save}/>
+      </TabPanel>
+      <TabPanel key={1} value={tabValue} index={1} >
+        {/* <HeaderPage style={{margin:'10px 0px'}}>
+          <Title style={{fontSize:18}}>Dados de Endereço</Title>
+        </HeaderPage> */}
+        <UserForm notification={notification} unform={unformEmail} onForm={onSaveUser} dispatch={dispatch} save={save}/>
+      </TabPanel>
+      <TabPanel key={2} value={tabValue} index={2} >
+        {/* <AddModal.Header
+          text='Dados de Endereço'
+          subText='Informe seu endereço para prosseguir'
+        /> */}
+        <AddressForm notification={notification} unform={unformEmail?.address?unformEmail.address:{}} onForm={onSaveUser} dispatch={dispatch} save={save}/>
+      </TabPanel>
+      <TabPanel key={3} value={tabValue} index={3} >
+        {/* <AddModal.Header
+          text='Dados de Endereço'
+          subText='Informe seu endereço para prosseguir'
+        /> */}
+        <BankForm banks={banks} setBanks={setBanks} notification={notification} unform={unformEmail?.bankAccount?unformEmail.bankAccount:{}} onForm={onSaveUser} dispatch={dispatch} save={save}/>
+      </TabPanel>
+      <TabPanel key={4} value={tabValue} index={4} >
+        {/* <AddModal.Header
+          text='Dados de Endereço'
+          subText='Informe seu endereço para prosseguir'
+        /> */}
+        <HeaderPage style={{margin:'20px 0px'}}>
+          <p style={{fontSize:18}}>Selecione as profissões e as areas de atuação.</p>
+        </HeaderPage>
+        <ProfessionForm notification={notification} unform={unformEmail} onForm={onSaveUser} dispatch={dispatch} save={save}/>
+      </TabPanel>
+    </NewTabs>
   )
 }

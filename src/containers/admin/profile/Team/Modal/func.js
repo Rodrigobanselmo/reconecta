@@ -4,8 +4,8 @@ import {NodeSendInviteEmail} from '../../../../../services/nodeCalls'
 
 function onSendInviteEmail(data,onClose,setLoad,notification) {
 
-  function checkSuccess() {
-    onClose('Email enviado com sucesso')
+  function checkSuccess(email) {
+    onClose(`Email a ${email} enviado com sucesso`)
     setLoad(false)
     notification.modal({
       title:'Usuário Adicionado',
@@ -30,23 +30,16 @@ function onSendInviteEmail(data,onClose,setLoad,notification) {
     setTimeout(() => {notification.error({message:'Error ao enviar email'})}, 1000);
   }
 
-  const emails = []
 
   data.array.map((item)=>{
-    emails.push(item.email.trim())
+    NodeSendInviteEmail(item.email.trim(),checkSuccess,checkError)
   })
 
-  const newData = {
-    email:emails.join(' '),
-    // company:data.currentUser.company.name
-  }
-
-  NodeSendInviteEmail(newData,checkSuccess,checkError)
 }
 
-export function onCreatePendingUser({dataToTreat,currentUser,notification,setLoad,onClose,setUsersRows}) {
+export function onCreatePendingUser({dataToTreat,unform,currentUser,notification,setLoad,onClose,setUsersRows}) {
 
-  var data = {array:dataToTreat,currentUser}
+  var data = {array:dataToTreat,unform,currentUser}
 
   function checkSuccess(resp) {
     onSendInviteEmail(data,onClose,setLoad,notification)

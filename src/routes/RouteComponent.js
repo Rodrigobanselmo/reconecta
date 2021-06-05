@@ -36,17 +36,19 @@ export default function RouteComponent({ component: Component,privateRoute, ...r
   }
 
   function isToInputData(typeOfAccount) {
-    console.log(typeOfAccount,currentUser?.name,rest.location.pathname,REQUEST_ADMIN_DATA)
+    console.log(typeOfAccount,currentUser?.politics,rest.location.pathname,REQUEST_ADMIN_DATA)
     if (typeOfAccount=='admin') {
-      if ((('name' in currentUser && currentUser.name == '')||!currentUser?.name) && rest.location.pathname == REQUEST_ADMIN_DATA) {
+      if ((('politics' in currentUser && currentUser.politics == '')||!currentUser?.politics) && rest.location.pathname == REQUEST_ADMIN_DATA) {
         return true
-      } else if ((('name' in currentUser && currentUser.name == '')||!currentUser?.name) && rest.location.pathname != REQUEST_ADMIN_DATA) {
+      } else if ((('politics' in currentUser && currentUser.politics == '')||!currentUser?.politics) && rest.location.pathname != REQUEST_ADMIN_DATA) {
         locationRedirect = REQUEST_ADMIN_DATA
         return false
-      } else if ('name' in currentUser && currentUser.name != '' && rest.location.pathname == REQUEST_ADMIN_DATA) {
+      // } else if ('politics' in currentUser && currentUser.politics != '' && rest.location.pathname == REQUEST_ADMIN_DATA) {
+      } else if ('politics' in currentUser && currentUser.politics && rest.location.pathname == REQUEST_ADMIN_DATA) {
         locationRedirect = HOME_ADMIN
         return false
-      } else if ('name' in currentUser && currentUser.name != '' && rest.location.pathname != REQUEST_ADMIN_DATA) {
+      // } else if ('politics' in currentUser && currentUser.politics != '' && rest.location.pathname != REQUEST_ADMIN_DATA) {
+      } else if ('politics' in currentUser && currentUser.politics && rest.location.pathname != REQUEST_ADMIN_DATA) {
         return true
       }
     }

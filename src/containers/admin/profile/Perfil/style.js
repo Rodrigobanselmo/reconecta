@@ -3,7 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import styled, {css} from "styled-components";
-import {Icons} from '../../../../../components/Icons/iconsDashboard'
+import {Icons} from '../../../../components/Icons/iconsDashboard'
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { lighten,darken,fade } from "@material-ui/core/styles";

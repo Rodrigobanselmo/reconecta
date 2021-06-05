@@ -6,7 +6,7 @@ export const itemsProfile = [
     {
       text: "Meu Perfil",
       icon: 'Person',
-      onClick: ''
+      onClick: 'perfil'
     },
     {
       text: "Histórico",

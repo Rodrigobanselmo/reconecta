@@ -1,3 +1,4 @@
+import { fade } from "@material-ui/core";
 import styled, {css} from "styled-components";
 import {Icons} from '../../../../components/Icons/iconsDashboard'
 
@@ -12,7 +13,7 @@ export const HeaderPage = styled.div`
 
 export const Page = styled.div`
     position:relative;
-    background-color: ${({theme})=>theme.palette.background.paper};
+    background-color: ${({theme})=>fade(theme.palette.background.paper,0.5)};
     width:100%;
     height:100%;
     overflow-y:scroll;
@@ -25,7 +26,7 @@ export const Container = styled.div`
     overflow-x:hidden;
     justify-content:center;
     align-items:center;
-    padding:80px 10vw 80px 10vw;
+    padding:50px 10vw 20px 10vw;
     min-height: 100vh;
 `;
 export const InputsContainer = styled.div`

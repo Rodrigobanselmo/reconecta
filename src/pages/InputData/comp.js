@@ -8,17 +8,57 @@ import {ContinueButton} from '../../components/Main/MuiHelpers/Button'
 import IconButton from '../../components/Main/MuiHelpers/IconButton';
 import {HeaderPage,Page,Container,InputsContainer,Title,SubTitle,IconCloseFull,IconGoBackFull} from '../../components/Dashboard/Components/Standard/PageCarousel'
 import Checkbox from '@material-ui/core/Checkbox';
-import {FormLabel,PoliticsContainer} from './styles'
+import {FormLabel,PoliticsContainer,AvatarInput} from './styles'
 import useTimeOut from '../../hooks/useTimeOut';
 import Input, {InputEnd,InputUnform,SelectedEnd} from '../../components/Main/MuiHelpers/Input'
 import {HeaderForm,FormContainer,SubTitleForm,TitleForm,DividerForm,AddAnotherForm,ButtonForm} from '../../components/Dashboard/Components/Form/comp'
-import {NumberFormatCNPJ,NumberOnly,RGFormat,NumberFormatOnly,NumberFormatCEP, NumberFormatCPF,NumberFormatTel,NumberFormatCell} from '../../lib/textMask'
+import {NumberFormatCNPJ,NumberOnly,NumberMoney,RGFormat,NumberFormatOnly,NumberFormatCEP, NumberFormatCPF,NumberFormatTel,NumberFormatCell} from '../../lib/textMask'
 import {ModalButtons} from '../../components/Main/MuiHelpers/ModalButtons'
 import * as Yup from 'yup'
 import {estados} from '../../constants/geral'
 import {onCheckCEP} from './func'
 import styled from "styled-components";
+import axios from "axios";
 import { SettingsPhoneTwoTone } from '@material-ui/icons';
+import 'react-phone-number-input/style.css'
+import PhoneInput from 'react-phone-number-input'
+import {EspecialSelector} from '../../components/Main/MuiHelpers/EspecialSelector'
+import {filterObject} from '../../helpers/ObjectArray'
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormControl from '@material-ui/core/FormControl';
+import FormLabelCheck from '@material-ui/core/FormLabel';
+import {keepOnlyNumbers,formatCPFeCNPJeCEPeCNAE} from '../../helpers/StringHandle';
+import { FiArrowLeft, FiMail, FiLock, FiUser, FiCamera } from 'react-icons/fi';
+
+const PhoneDiv = styled.div`
+  padding: 12px 15px;
+  border-radius: 4px;
+  border: 1px solid #9f9fab99;
+  width: 100%;
+  margin:10px 0 20px 0;
+  position:relative;
+
+  &:after {
+  position: absolute;
+  text-align: center;
+  content: "Celular";
+  font-size: 13px;
+  top: -9px;
+  left: 10px;
+  height: 10px;
+  width: 50px;
+  background-color: #fff;
+  color: ${({theme})=>theme.palette.text.secondary};
+}
+`;
+
+const Label = styled(FormControlLabel)`
+&&& .MuiFormControlLabel-label	{
+  font-size:14px;
+}
+`;
 
 const AddButtonActivitie = styled.div`
   margin:5px auto 20px 26px;
@@ -139,22 +179,34 @@ PageWrapper.Politics =  function Continue({setChecked,checked}) {
   )
 }
 
-PageWrapper.FirstForm =  function InputLast({setUnform,unform}) {
+export function FirstForm({ onUploadProfile,user,setUnform,unform,notification}) {
+
+  const [value, setValue] = useState(unform.cell)
+
+  // axios.get('https://brasilapi.com.br/api/cnpj/v1/{}').then(res=>{
+  //     console.log('res',res.data)
+  //   }).catch((error)=>{
+  //     console.log('error',error)
+  // })
 
   const formRef = React.useRef()
 
   const validation = Yup.object({
     name: Yup.string().required('Nome não pode estar em branco.'),
     cpf: Yup.string().trim().length(14,'CPF incompleto').required('CPF não pode estar em branco.'),
-    rg: Yup.string().trim().length(12,'RG incompleto').required('RG não pode estar em branco.'),
-    cell: Yup.string().trim().length(15,'Número de celular incompleto').required('Número de celular não pode estar em branco.'),
+    rg: Yup.string().trim().required('RG não pode estar em branco.'),
+    // cell: Yup.string().trim().length(15,'Número de celular incompleto').required('Número de celular não pode estar em branco.'),
   })
 
+  console.log('value21: ', value)
+  console.log('value1: ', unform.cpf)
   const handleSubmit = React.useCallback(async (formData) => {
     formRef.current.setErrors({})
+    console.log('value',value)
+    if (!value||(value&&value.length<6)) return notification.warn({message:`Número de celular vazio ou inválido.`})
     try {
       await validation.validate(formData, { abortEarly: false })
-      setUnform({...unform,...formData})
+      setUnform({...unform,...formData,cell:value})
       console.log('submitted: ', formData)
     } catch (error) {
       console.log('error',error);
@@ -165,7 +217,16 @@ PageWrapper.FirstForm =  function InputLast({setUnform,unform}) {
       })
       formRef.current?.setErrors(errors)
     }
-  }, [unform])
+  }, [unform,value])
+
+  const handleAvatarChange = React.useCallback(
+    (event) => {
+      if (event.target.files && event.target.files[0]) {
+        onUploadProfile(event.target.files[0])
+      }
+    },
+    [],
+  );
 
   return(
     <InputsContainer>
@@ -174,35 +235,63 @@ PageWrapper.FirstForm =  function InputLast({setUnform,unform}) {
          ref={formRef}
          onSubmit={handleSubmit}
       >
-        <InputUnform
-          width={'100%'}
-          name={'name'}
-          labelWidth={120}
-          label={'Nome Completo'}
-          status={'Normal'}
-          variant="outlined"
-          inputProps={{style: {textTransform: 'capitalize',color:'#000'}}}
-        />
-        <InputUnform
-          width={'50%'}
-          name={'cpf'}
-          labelWidth={30}
-          style={{marginRight:20}}
-          label={'CPF'}
-          variant="outlined"
-          inputProps={{placeholder:'000.000.000-00',style: {textTransform: 'capitalize',color:'#000'}}}
-          inputComponent={NumberFormatCPF}
-        />
-        <InputUnform
-          width={'50%'}
-          name={'rg'}
-          labelWidth={20}
-          label={'RG'}
-          variant="outlined"
-          inputProps={{placeholder:'00.000.000-0',style: {textTransform: 'capitalize',color:'#000'}}}
-          inputComponent={RGFormat}
-        />
-        <InputUnform
+        <div style={{display:'flex'}}>
+          <AvatarInput>
+            {!unform?.photoURL ?
+              <div>
+                <Icons style={{fontSize:140}} type={`Avatar`}/>
+              </div>
+            :
+              <img src={unform.photoURL} alt={'perfil_photo'} />
+            }
+            <label htmlFor="avatar">
+              <FiCamera />
+              <input accept="image/*" type="file" id="avatar" onChange={handleAvatarChange} />
+            </label>
+          </AvatarInput>
+          <div>
+            <InputUnform
+              width={'100%'}
+              name={'name'}
+              labelWidth={120}
+              label={'Nome Completo'}
+              defaultValue={unform?.name}
+              status={'Normal'}
+              variant="outlined"
+              inputProps={{style: {textTransform: 'capitalize',color:'#000'}}}
+            />
+            <InputUnform
+              width={'50%'}
+              name={'cpf'}
+              defaultValue={keepOnlyNumbers(unform?.cpf)}
+              labelWidth={30}
+              style={{marginRight:20}}
+              label={'CPF'}
+              variant="outlined"
+              inputProps={{placeholder:'000.000.000-00',style: {textTransform: 'capitalize',color:'#000'}}}
+              inputComponent={NumberFormatCPF}
+            />
+            <InputUnform
+              width={'50%'}
+              name={'rg'}
+              defaultValue={keepOnlyNumbers(unform?.rg)}
+              labelWidth={20}
+              label={'RG'}
+              variant="outlined"
+              inputProps={{style: {color:'#000'}}}
+            />
+            <PhoneDiv >
+              <PhoneInput
+                placeholder="Número de celular"
+                value={value}
+                defaultCountry="BR"
+                numberInputProps={{style: {fontSize:15,paddingLeft:3,border:'none',width:'100%'}}}
+                onChange={setValue}
+              />
+            </PhoneDiv>
+          </div>
+        </div>
+        {/* <InputUnform
           width={'100%'}
           name={'cell'}
           labelWidth={70}
@@ -212,11 +301,12 @@ PageWrapper.FirstForm =  function InputLast({setUnform,unform}) {
           inputProps={{placeholder:'(__) _____-____',style: {color:'#000'}}}
           iconStart={'WhatsApp'}
           inputComponent={NumberFormatCell}
-        />
+        /> */}
         <InputUnform
           width={'100%'}
           name={'facebook'}
           labelWidth={70}
+          defaultValue={unform?.facebook}
           label={'Facebook'}
           statusStart={'Facebook'}
           variant="outlined"
@@ -227,6 +317,7 @@ PageWrapper.FirstForm =  function InputLast({setUnform,unform}) {
           width={'100%'}
           name={'instagram'}
           labelWidth={75}
+          defaultValue={unform?.instagram}
           statusStart={'Instagram'}
           label={'Instagram'}
           iconStart={'Instagram'}
@@ -241,7 +332,7 @@ PageWrapper.FirstForm =  function InputLast({setUnform,unform}) {
   )
 }
 
-PageWrapper.SecondForm =  function InputLast({setUnform,unform,onSecondForm}) {
+export function SecondForm({ user,setUnform,unform,onSecondForm}) {
 
   const initialStateData = {
     cep:'',
@@ -265,7 +356,7 @@ PageWrapper.SecondForm =  function InputLast({setUnform,unform,onSecondForm}) {
     formRef.current.setErrors({})
     try {
       await validation.validate(formData, { abortEarly: false })
-      onSecondForm({...unform,...formData})
+      onSecondForm({...unform,address:{...unform.address,...formData.address}})
       window.scrollTo(0, 0);
       console.log('submitted: ', formData)
     } catch (error) {
@@ -300,18 +391,20 @@ PageWrapper.SecondForm =  function InputLast({setUnform,unform,onSecondForm}) {
         .then((res) => res.json())
         .then((data) => {
           setData(data=>({...data,cep:value, status:'Check',message:'Cep válido'}))
-          setUnform(unform=>({...unform,
-            complemento:data.complemento,
-            logradouro:data.logradouro,
-            municipio:data.localidade,
-            bairro:data.bairro,
-            uf:data.uf,
-            cep:value
+          setUnform(unform=>({...unform,address:{...unform.address,
+              complemento:data.complemento,
+              logradouro:data.logradouro,
+              municipio:data.localidade,
+              bairro:data.bairro,
+              uf:data.uf,
+              cep:value
+            }
           }))
         });
       }
     }
   }
+
 
   return(
     <InputsContainer>
@@ -324,7 +417,7 @@ PageWrapper.SecondForm =  function InputLast({setUnform,unform,onSecondForm}) {
         <InputUnform
         width={'100%'}
         name={`address.cep`}
-        defaultValue={unform.cep}
+        defaultValue={keepOnlyNumbers(unform.address?.cep?unform.address.cep:'')}
         labelWidth={33}
         label={'CEP'}
         variant="outlined"
@@ -338,15 +431,15 @@ PageWrapper.SecondForm =  function InputLast({setUnform,unform,onSecondForm}) {
         />
         <InputUnform
           width={'100%'}
-          defaultValue={unform.logradouro}
-          name={`address.rua`}
+          defaultValue={unform.address?.logradouro}
+          name={`address.logradouro`}
           labelWidth={75}
           label={'Logradouro'}
           variant="outlined"
         />
         <InputUnform
           width={'50%'}
-          defaultValue={unform?.bairro}
+          defaultValue={unform.address?.bairro}
           name={`address.bairro`}
           labelWidth={50}
           label={'Bairro'}
@@ -356,6 +449,7 @@ PageWrapper.SecondForm =  function InputLast({setUnform,unform,onSecondForm}) {
         <InputUnform
           width={'15%'}
           name={`address.numero`}
+          defaultValue={unform.address?.numero}
           labelWidth={63}
           label={'Número'}
           variant="outlined"
@@ -364,7 +458,7 @@ PageWrapper.SecondForm =  function InputLast({setUnform,unform,onSecondForm}) {
         />
         <InputUnform
           width={'35%'}
-          defaultValue={unform.complemento}
+          defaultValue={unform.address?.complemento}
           name={`address.complemento`}
           labelWidth={96}
           label={'Complemento'}
@@ -373,7 +467,7 @@ PageWrapper.SecondForm =  function InputLast({setUnform,unform,onSecondForm}) {
         />
         <InputUnform
             width={'90%'}
-            defaultValue={unform?.municipio}
+            defaultValue={unform.address?.municipio}
             name={`address.municipio`}
             labelWidth={70}
             label={'Município'}
@@ -385,8 +479,8 @@ PageWrapper.SecondForm =  function InputLast({setUnform,unform,onSecondForm}) {
             width={'10%'}
             labelWidth={25}
             label={'UF'}
-            selected={unform?.uf?(estados.findIndex(i=>i===unform.uf)+1):1}
-            setData={(selected)=>setUnform(data=>({...data,uf:selected}))}
+            selected={unform.address?.uf?(estados.findIndex(i=>i===unform.address.uf)+1):1}
+            setData={(selected)=>setUnform(data=>({...data,address:{...data.address,uf:selected}}))}
             data={estados}
             variant="outlined"
             />
@@ -398,7 +492,184 @@ PageWrapper.SecondForm =  function InputLast({setUnform,unform,onSecondForm}) {
   )
 }
 
-PageWrapper.ThirdForm =  function InputLast({setUnform,notification,unform,onThirdForm}) {
+export function BanksForm({ user,setUnform,unform,notification,setPosition}) {
+
+  const [banks, setBanks] = useState([])
+  const [search, setSearch] = useState('')
+
+  function onData2(id) {
+    const index = banks.findIndex(i=>i.id==id)
+    if (banks[index]) {
+      setUnform(data=>({...data,bankAccount:{...data.bankAccount,name:banks[index].text}}))
+    }
+    return
+  }
+
+  React.useEffect(() => {
+   if (banks.length == 0) axios.get('https://brasilapi.com.br/api/banks/v1').then(res=>{
+      console.log('res',res.data)
+      const array = []
+      res.data.map((item)=>{
+        array.push({id:`${item.fullName} (${item.name})`,text:`${item.fullName} (${item.name})`})
+      })
+      setBanks(array)
+    }).catch((error)=>{
+      console.log('error',error)
+      // setBanks(res.data)
+    })
+  }, [])
+
+  const formRef = React.useRef()
+
+  const validation = Yup.object({
+    // cell: Yup.string().trim().length(15,'Número de celular incompleto').required('Número de celular não pode estar em branco.'),
+  })
+
+  const checkJur = (target) => {
+    formRef.current.setFieldValue('cpfOrCnpj', '');
+    setUnform(data=>({...data,bankAccount:{...data.bankAccount,juridica:target.value}}))
+  }
+
+  const handleSubmit = React.useCallback(async (formData) => {
+    formRef.current.setErrors({})
+    // if (!value||(value&&value.length<6)) return notification.warn({message:`Número de celular vazio ou inválido.`})
+    try {
+      await validation.validate(formData, { abortEarly: false })
+      setUnform({...unform,bankAccount:{...unform.bankAccount,...formData.bankAccount}})
+      setPosition(p=>p+1)
+      console.log('submitted: ', formData)
+    } catch (error) {
+      console.log('error',error);
+      const errors = {}
+      console.log('submittedError: ', formData)
+      error?.inner?.forEach((err) => {
+        errors[err.path] = err.message
+      })
+      formRef.current?.setErrors(errors)
+    }
+  }, [unform])
+
+  const checkCNPJ = (valueRow) => {
+    if (unform.bankAccount.juridica!=='true') return ''
+    const value = keepOnlyNumbers(valueRow.target.value)
+    console.log( value, value.length)
+    if (value && value.length == 14) {
+      axios.get(`https://brasilapi.com.br/api/cnpj/v1/{${keepOnlyNumbers(value)}`).then(res=>{
+        console.log('res',res)
+        setUnform(unform=>({...unform,bankAccount:{...unform.bankAccount,
+          titular:res.data['razao_social'],cpfOrCnpj:formatCPFeCNPJeCEPeCNAE(valueRow.target.value)}
+        }))
+        formRef.current.setFieldValue('bankAccount.titular', res.data['razao_social']);
+        formRef.current.setFieldValue('bankAccount.cpfOrCnpj', formatCPFeCNPJeCEPeCNAE(valueRow.target.value));
+      }).catch((error)=>{
+        console.log('error',error)
+        notification.warn({message:`CNPJ não encontrado na Receita Federal`})
+      })
+    }
+  }
+
+  var text = {
+    "allItemsAreSelected": "Todo os items foram selecionados",
+    "noOptions": "Nenhuma opção",
+    "search": "Pesquisar...",
+    "selectAll": "Selecionar Todos",
+    "select": "Items selecionados",
+    "selectSomeItems": "Selecione seu banco..."
+  }
+
+  return(
+    <InputsContainer style={{minHeight:400}}>
+      <FormContainer
+         noValidate
+         ref={formRef}
+         key={`${unform.cpf}${unform.name}${unform.bankAccount.titular}`}
+         onSubmit={handleSubmit}
+      >
+        <FormLabelCheck style={{fontSize:15,marginBottom:8}} component="legend">Nome do banco</FormLabelCheck>
+        <EspecialSelector
+          isSimpleSelection
+          override={text}
+          defaultValue={unform.bankAccount?.name?[unform.bankAccount?.name]:[]}
+          inputStyle={'true'}
+          selectedValue={unform.bankAccount?.name}
+          hideSelectAll
+          width={'100%'}
+          onSelectFunction={onData2}
+          onSearch={setSearch}
+          options={(banks?banks.filter(i=> (search == '' || filterObject(i,search,'text') || filterObject(i,search,'name') )).slice(0,20):[])}
+        />
+        <FormControl component="fieldset" style={{marginBottom:0,marginTop:30,width:'100%'}}>
+          <FormLabelCheck style={{fontSize:15}} component="legend">É conta juridica?</FormLabelCheck>
+          <RadioGroup row aria-label="gender" name="gender1" value={unform.bankAccount.juridica} onChange={({target})=>checkJur(target)}>
+            <Label value={'false'} control={<Radio size='small' color="primary"/>} label="Não" />
+            <Label value={'true'} control={<Radio size='small' color="primary"/>} label="Sim" />
+          </RadioGroup>
+        </FormControl>
+
+        <InputUnform
+          width={'100%'}
+          name={'bankAccount.cpfOrCnpj'}
+          onChange={checkCNPJ}
+          labelWidth={45}
+          defaultValue={unform.bankAccount.juridica=='true'?unform.bankAccount?.cpfOrCnpj?keepOnlyNumbers(unform.bankAccount.cpfOrCnpj):'':unform.bankAccount?.cpfOrCnpj?keepOnlyNumbers(unform.bankAccount.cpfOrCnpj):keepOnlyNumbers(unform?.cpf)}
+          label={unform.bankAccount.juridica=='true'?'CNPJ':'CPF'}
+          status={'Normal'}
+          variant="outlined"
+          inputProps={{style: {textTransform: 'capitalize',color:'#000'}}}
+          inputComponent={unform.bankAccount.juridica=='true'?NumberFormatCNPJ:NumberFormatCPF}
+        />
+        <InputUnform
+          width={'80%'}
+          name={'bankAccount.titular'}
+          labelWidth={120}
+          label={unform.bankAccount.juridica=='true'?'Razão social':'Nome do titular'}
+          style={{marginRight:20}}
+          defaultValue={unform.bankAccount.juridica=='true'?unform.bankAccount?.titular?unform.bankAccount.titular:'':unform.bankAccount?.titular?unform.bankAccount.titular:unform.name}
+          status={'Normal'}
+          variant="outlined"
+          inputProps={{style: {textTransform: 'capitalize',color:'#000'}}}
+        />
+        <SelectedEnd
+          marginTop={10}
+          marginBottom={20}
+          width={'20%'}
+          labelWidth={100}
+          label={'Tipo de conta'}
+          selected={unform.bankAccount.type?(['Conta corrente','conta poupança','Conta de pagamentos'].findIndex(i=>i===unform.bankAccount.type)+1):1}
+          setData={(selected)=>setUnform(data=>({...data,bankAccount:{...data.bankAccount,type:selected}}))}
+          data={['Conta corrente','conta poupança','Conta de pagamentos']}
+          variant="outlined"
+        />
+        <InputUnform
+          width={'100%'}
+          name={'bankAccount.agencia'}
+          defaultValue={unform.bankAccount?.agencia}
+          labelWidth={80}
+          label={'Agência'}
+          status={'Normal'}
+          variant="outlined"
+          inputProps={{style: {textTransform: 'capitalize',color:'#000'}}}
+        />
+        <InputUnform
+          width={'100%'}
+          name={'bankAccount.conta'}
+          defaultValue={unform.bankAccount?.conta}
+          labelWidth={120}
+          label={'Conta com digito'}
+          status={'Normal'}
+          variant="outlined"
+          inputProps={{style: {textTransform: 'capitalize',color:'#000'}}}
+        />
+
+        <ButtonForm type='submit' jusify='center' primary={'true'} style={{width:'fit-content'}}>
+          Proximo
+        </ButtonForm>
+      </FormContainer>
+    </InputsContainer>
+  )
+}
+
+export function ThirdForm({user,setUnform,notification,unform,onThirdForm}) {
 
   const initialData = [
     { name: 'Educador Físico',activities:['Opção 1 Educador Físico','Opção 2 Educador Físico']},
@@ -413,23 +684,51 @@ PageWrapper.ThirdForm =  function InputLast({setUnform,notification,unform,onThi
     { name: 'Psicopedagogo',activities:['Opção 1 Psicopedagogo','Opção 2 Psicopedagogo']},
   ]
 
+  const oldProfession = []
+  if (unform?.profession) {
+    unform.profession.map((item)=>{
+      if (!oldProfession.includes(item.profession)) oldProfession.push(item.profession)
+    })
+  }
+
   const formRef = React.useRef()
-  const [data, setData] = useState([...initialData])
-  const [profession, setProfession] = useState([])
-  const [activities, setActivities] = useState([])
+  const [data, setData] = useState(unform?.permissions && unform?.permissions.includes('ec') ? [...initialData] : [...initialData.filter(i=>i.name != 'Conector')])
+  const [profession, setProfession] = useState([...oldProfession])
+  const [activities, setActivities] = useState(unform?.profession?unform.profession:[])
   const [open, setOpen] = useState(false)
   const [newActivit, setNewActivit] = useState('')
 
   const validation = Yup.object({})
 
+  React.useEffect(() => {
+    const newInitial = unform?.permissions && unform?.permissions.includes('ec') ? [...initialData] : [...initialData.filter(i=>i.name != 'Conector')]
+    console.log()
+    if (unform?.profession) {
+      unform.profession.map(item=>{
+        initialData.map((array,index)=>{
+          if (!array.activities.includes(item.activit) && array.name == item.profession && item.activit) newInitial[index].activities = [...newInitial[index].activities,item.activit]
+        })
+      })
+    }
+    setData([...newInitial])
+  }, [])
+
   const handleSubmit = React.useCallback(async (formData) => {
 
     var arrayError = []
+    var novasActivities = [...activities]
+    var newFormdata = {...formData}
     Object.keys(formData).map(key=>{
       if (formData[key] == '') arrayError.push(key)
+      if (key.split('//').length == 2) {
+        const index = novasActivities.findIndex(i=>i.activit == key.split('//')[1] &&i.profession == key.split('//')[0])
+        novasActivities[index].price = formData[key].split(',')[1] ? formData[key].split(',')[1].length==2?formData[key]:formData[key]+'0':formData[key]+',00'
+        delete newFormdata[key]
+      }
     })
 
-    if (arrayError.length>0) return notification.warn({message:`${arrayError[0].split('-')[1]} não pode estar em branco.`})
+    if (arrayError.length>0 && arrayError[0].split('-')[1]) return notification.warn({message:`${arrayError[0].split('-')[1]} não pode estar em branco.`})
+    else if (arrayError.length>0) return notification.warn({message:`Informe o preço dos atendimentos selecionados.`})
 
     formRef.current.setErrors({
     })
@@ -438,10 +737,11 @@ PageWrapper.ThirdForm =  function InputLast({setUnform,notification,unform,onThi
     if (activities.length == 0) return notification.warn({message:'Selecione ao menos uma atividade de cada profissão.'})
     if (activities.filter((i,index)=>activities.findIndex(fi=>fi.profession==i.profession)==index).length < profession.length ) return notification.warn({message:'Selecione ao menos uma atividade de cada profissão.'})
 
+
     try {
       await validation.validate(formData, { abortEarly: false })
-      onThirdForm({...unform,...formData,profession:activities})
-      console.log('submitted: ', formData,activities)
+      onThirdForm({...unform,...newFormdata,profession:novasActivities})
+      console.log('submitted: ', formData,novasActivities)
     } catch (error) {
       console.log('error',error);
       const errors = {}
@@ -456,6 +756,19 @@ PageWrapper.ThirdForm =  function InputLast({setUnform,notification,unform,onThi
 
   const handleChangeProffesion = (event,item) => {
     if (!event.target.checked) {
+      data.map(i=>{
+        if (i.name==item) {
+          if (i?.inputs) {
+            i.inputs.map(it=>{
+              if (unform[`${i.name}-${it}`]) {
+                var newUnform = {...unform}
+                delete newUnform[`${i.name}-${it}`]
+                setUnform({...newUnform})
+              }
+            })
+          }
+        }
+      })
       setProfession(profession=>[...profession.filter(i=>i!=item)])
       setActivities(activitie=>[...activitie.filter(i=>i.profession!=item)])
     } else {
@@ -472,13 +785,15 @@ PageWrapper.ThirdForm =  function InputLast({setUnform,notification,unform,onThi
   };
 
   const onAddActivit = () => {
+
     const index = data.findIndex(i=>i.name==open)
+    if (!newActivit) return null
     if (data[index].activities.includes(newActivit)) return notification.error({message:'Essa atividade já existe.'})
 
-    var newData = {...data}
+    var newData = [...data]
     const newActivities = [...data[index].activities,newActivit]
     newData[index].activities = [...newActivities]
-    setData({...newData})
+    setData([...newData])
   };
 
 
@@ -526,7 +841,7 @@ PageWrapper.ThirdForm =  function InputLast({setUnform,notification,unform,onThi
                   <div key={`${item.name}-${label}`} style={{margin:'-5px 0 -5px 26px'}}>
                     <InputUnform
                       width={'100%'}
-                      // defaultValue={unform.logradouro}
+                      defaultValue={unform[`${item.name}-${label}`]?unform[`${item.name}-${label}`]:''}
                       name={`${item.name}-${label}`}
                       labelWidth={45}
                       label={label}
@@ -537,20 +852,34 @@ PageWrapper.ThirdForm =  function InputLast({setUnform,notification,unform,onThi
                   )
                 })}
                 {profession.includes(item.name) && item.activities.sort().map((activit,indexAct)=>{
+                  const indexActivitie = activities.findIndex(i=>i.activit == activit&&i.profession == item.name)
+
                   return (
                     <div key={`${activit}${indexAct}`} style={{display:'flex',flexDirection:'column'}}>
-                      <div style={{display:'flex',flexDirection:'row',margin:'0 0 10px 26px'}}>
+                      <div style={{display:'flex',alignItems:'center',flexDirection:'row',margin:'0 0 10px 26px'}}>
                         <Checkbox
                           style={{margin:0,padding:'0 6px 0 0'}}
-                          checked={activities.findIndex(i=>i.activit == activit&&i.profession == item.name) != -1}
+                          checked={indexActivitie != -1}
                           size='small'
                           onChange={(event)=>handleChangeActivities(event,activit,item.name)}
                           name={activit}
                           color="primary"
                         />
-                        <span style={{zIndex:110,marginBottom:0,display:'inline-block',marginTop:0}}>
+                        <span style={{zIndex:110,marginBottom:0,marginRight:15,display:'inline-block',marginTop:0}}>
                           {activit}
                         </span>
+                        {indexActivitie != -1 &&
+                          <InputUnform
+                            width={'150px'}
+                            defaultValue={activities[indexActivitie]?.price}
+                            name={`${item.name}//${activit}`}
+                            statusStart={'money'}
+                            labelWidth={45}
+                            label={'Preço'}
+                            variant="standard"
+                            inputComponent={NumberMoney}
+                          />
+                        }
                       </div>
                       {indexAct == item.activities.length-1 &&
                         <AddButtonActivitie onClick={()=>setOpen(item.name)}>

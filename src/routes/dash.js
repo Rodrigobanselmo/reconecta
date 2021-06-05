@@ -1,9 +1,12 @@
-import { HomeAdmin,Home,Team,Calendar } from '../containers';
+import { HomeAdmin,Home,Team,Calendar,Perfil,Profession } from '../containers';
 import {
   HOME_ADMIN,
   DASHBOARD,
   TEAM,
-  CALENDAR_ADMIN
+  CALENDAR_ADMIN,
+  ADMIN_PERFIL,
+  ADMIN_PROFESSION,
+  ADMIN_PERFIL_EDIT
 } from './routesNames'
 
 const routes = [
@@ -15,6 +18,23 @@ const routes = [
   {
     path: HOME_ADMIN,
     component: HomeAdmin,
+    admin:true,
+  },
+  {
+    path: ADMIN_PERFIL,
+    component: Perfil,
+    exact:true,
+    admin:true,
+  },
+  {
+    path: ADMIN_PERFIL_EDIT,
+    component: Perfil,
+    exact:true,
+    admin:true,
+  },
+  {
+    path: ADMIN_PROFESSION,
+    component: Profession,
     admin:true,
   },
   {

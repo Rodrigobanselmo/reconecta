@@ -65,6 +65,9 @@ export const ContainerWeekdays = styled.div`
     font-size:14px;
     padding-left:2px;
   }
+  ${props => props.oldDay && css`
+    background-color: ${({theme})=> fade(theme.palette.background.line,0.15) };
+  `}
 
   ${props => props.today && css`
     background-color: ${({theme})=> theme.palette.primary.main };
@@ -88,6 +91,11 @@ export const ContainerWeek = styled.div`
   ${props => props.hide && css`
     /* min-width:100px; */
     flex:1;
+    /* max-width:100px; */
+  `}
+  ${props => props.oldDay && css`
+    /* min-width:100px; */
+    opacity:0.8;
     /* max-width:100px; */
   `}
 

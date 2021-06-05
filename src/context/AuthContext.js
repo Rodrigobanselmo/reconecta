@@ -23,7 +23,14 @@ export function AuthProvider({ children }) {
 
 
   function checkSuccess(doc,user,newUser) {
-    setCurrentUser({...user,...doc})
+    const importantData = {
+      displayName:user?.displayName,
+      emailVerified:user?.emailVerified,
+      email:user?.email,
+      photoURL:user?.photoURL,
+      uid:user?.uid,
+    }
+    setCurrentUser({...importantData,...doc})
     setLoad(false)
     console.log('user',{...doc})
     if (location.pathname.includes(SIGN)) history.replace(DASHBOARD)

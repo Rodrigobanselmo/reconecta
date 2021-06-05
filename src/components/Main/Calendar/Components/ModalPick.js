@@ -7,6 +7,7 @@ import {SelectedEnd} from '../../MuiHelpers/Input'
 import Checkbox from '@material-ui/core/Checkbox';
 import DateWeekDaySelector from '../Components/DateWeekDaySelector'
 import {Icons} from '../../../Icons/iconsDashboard'
+import {ContinueButton} from '../../MuiHelpers/Button'
 import HoursSelection from '../Components/HourSelector'
 import WeekDaysSelector from '../Components/WeekDaysSelector'
 import {BootstrapTooltip} from '../../MuiHelpers/Tooltip'
@@ -48,11 +49,21 @@ export default function DateSelection({open,setOpen,onConfirm,dataCard}) {
   const { daysArr } = useCalendar();
   const {currentUser} = useAuth();
   const calendar = useSelector(state => state.calendar)
-  const consultArray = ['Clinico Geral','Neurologista']
+  // const consultArray = ['Clinico Geral','Neurologista']
   const dispatch = useDispatch()
   const notification = useNotification();
 
+  function onConsultArray() {
+    const array = []
+    currentUser?.profession && currentUser.profession.map(item=>{
+      console.log(item)
+      if (!array.includes(item.activit)) array.push(item.activit)
+    })
+    return array
+  }
 
+  const consultArray = React.useMemo(() => onConsultArray(), [currentUser])
+  console.log(consultArray)
 
 
   var time = new Date((new Date()).setHours(0,0,0,0));
@@ -61,8 +72,8 @@ export default function DateSelection({open,setOpen,onConfirm,dataCard}) {
 
   const [value, setValue] = React.useState('only');
 
-  const [dateInput, setDateInput] = React.useState(dataCard.date);
-  const [dateInputEnd, setDateInputEnd] = React.useState(dataCard.time.dateEnd?dataCard.time.dateEnd:newDate);
+  const [dateInput, setDateInput] = React.useState(new Date(dataCard.date));
+  const [dateInputEnd, setDateInputEnd] = React.useState(dataCard.time.dateEnd?new Date(dataCard.time.dateEnd):newDate);
   const [reptAfter, setReptAfter] = React.useState(1);
   const [numberOfConsults, setNumberOfConsults] = React.useState(1);
   const [localType, setLocalType] = React.useState(dataCard.time.local);
@@ -84,10 +95,11 @@ export default function DateSelection({open,setOpen,onConfirm,dataCard}) {
   // console.log(dataCard.time.initialDate<new Date('05/26/2021'))
   React.useEffect(() => {
     if (value =='all') {
-      setDateInput(dataCard.time.initialDate<new Date((new Date()).setHours(0,0,0,0))?new Date((new Date()).setHours(0,0,0,0)):dataCard.time.initialDate)
+      console.log(dataCard.time.dateEnd,new Date(dataCard.time.dateEnd),dataCard.time.dateEnd)
+      setDateInput(dataCard.time.initialDate<new Date((new Date()).setHours(0,0,0,0))?new Date((new Date()).setHours(0,0,0,0)):new Date(dataCard.time.initialDate))
       setHoursSelected(parseInt(dataCard.time.initialTime.split(':')[0]))
       setMinutesSelected(parseInt(dataCard.time.initialTime.split(':')[1]))
-      setDateInputEnd(dataCard.time.dateEnd?dataCard.time.dateEnd:newDate)
+      setDateInputEnd(dataCard.time.dateEnd?new Date(dataCard.time.dateEnd):newDate)
       setHoursSelectedInt(parseInt(dataCard.time.intervalo.split(':')[0]))
       setMinutesSelectedInt(parseInt(dataCard.time.intervalo.split(':')[1]))
       setChecked(dataCard.time.checked)
@@ -109,6 +121,24 @@ export default function DateSelection({open,setOpen,onConfirm,dataCard}) {
       setReptAfter(1)
     }
   }, [value])
+
+  React.useEffect(() => {
+    // const today = new Date((new Date()).setHours(0,0,0,0))
+    const todaySelected = new Date(dateInput)
+    // if (new Date((new Date((new Date()).setHours(0,0,0,0))).setDate(today.getDate() + 7)) > new Date(dateInput)) {
+      if (daysSelected.length == 1 ) {
+        const newDate = parseInt(daysSelected[0]) - parseInt(todaySelected.getDay())
+        if (newDate == 0) setDateInput(todaySelected)
+        if (newDate > 0) setDateInput(new Date(todaySelected.setDate(todaySelected.getDate() + newDate)))
+        if (newDate < 0) setDateInput(new Date(todaySelected.setDate(todaySelected.getDate() + newDate + 7)))
+        // if (newDate > 0) setDateInput(new Date(today.setDate(today.getDate() + newDate)))
+        // if (newDate < 0) setDateInput(new Date(today.setDate(today.getDate() + newDate + 7)))
+      } else {
+        setDateInput(todaySelected)
+      }
+    // }
+    //setDaysSelected([(new Date()).getDay()])
+  }, [daysSelected])
 
   const typesToSelet = ['1 semana (Toda semana)', '2 semanas (Semana sim, semana não)', '3 semanas', '4 semanas', '5 semanas', '6 semanas']
   const typesToSelet2 = ['1 atendimento', '2 atendimentos', '3 atendimentos', '4 atendimentos', '5 atendimentos', '6 atendimentos', '7 atendimentos', '8 atendimentos', '9 atendimentos', '10 atendimentos', '11 atendimentos', '12 atendimentos']
@@ -296,7 +326,7 @@ export default function DateSelection({open,setOpen,onConfirm,dataCard}) {
 
       console.log()
       if (value == 'all') {
-        var newCreate = {...create}
+        var newCreate = {...calendar}
         newCreate = clone(newCreate)
 
         // var newCalendar = {...calendar}
@@ -316,9 +346,19 @@ export default function DateSelection({open,setOpen,onConfirm,dataCard}) {
             if (newCreate[key].time[time].id == dataCard.time.id) delete newCreate[key].time[time]
           })
         })
-        return {...calendar,...newCreate}
+
+        // var newCalendarData = {...calendar}
+        // Object.keys(calendar).map(dayData=>{
+        //   if (dayData?.time) {
+        //     Object.keys(dayData.time).map(time=>{
+        //       if (dataCard.time?.id && time?.id && time.id === dataCard.time.id) delete newCalendarData[dayData].time[time]
+        //     })
+        //   }
+        // })
+
+        return {...newCreate,...create}
       } else {
-        var newCreate = {...create}
+        var newCreate = {...calendar}
         newCreate = clone(newCreate)
 
         Object.keys(newCreate).map(key=>{
@@ -326,23 +366,27 @@ export default function DateSelection({open,setOpen,onConfirm,dataCard}) {
             if (newCreate[key].time[time].uid == dataCard.time.uid) delete newCreate[key].time[time]
           })
         })
-        return {...calendar,...newCreate}
+        return {...newCreate,...create}
       }
     } else {
       return {...calendar,...create}
     }
   }
-  console.log(new Date())
-  function onAddTime() {
 
-    if (getFinalHour(hoursSelected*60+minutesSelected,hoursSelectedAtd*60+minutesSelectedAtd,numberOfConsults == 1 ? numberOfConsults:typesToSelet2.findIndex(i=>i==numberOfConsults)+1)[0] >= 24) {
+  function onAddTime(isDelete) {
+    if (consultType.length == 0 && !isDelete) return notification.warn({message:'Selecione ao menos um atendimento para confirmar o horário'})
+
+    if (!isDelete&&getFinalHour(hoursSelected*60+minutesSelected,hoursSelectedAtd*60+minutesSelectedAtd,numberOfConsults == 1 ? numberOfConsults:typesToSelet2.findIndex(i=>i==numberOfConsults)+1)[0] >= 24) {
      return notification.warn({message:'Horário de termino do atendimento não pode ser maior que 24 horas'})
     }
 
     if (onConfirm) onConfirm()
 
     function checkSuccess(response) {
-      dispatch({ type: 'CALENDAR_SET', payload: response })
+      var dataUser = {id:currentUser.uid,name:currentUser.name,photoURL:currentUser?.photoURL?currentUser.photoURL:null}
+      dispatch({ type: 'CALENDAR_SET', payload: {...response, ...dataUser} })
+      // console.log('{...response, ...dataUser}',{...response, ...dataUser})
+      dispatch({ type: 'SAVE', payload: true })
       // setData({...response})
     }
 
@@ -356,9 +400,10 @@ export default function DateSelection({open,setOpen,onConfirm,dataCard}) {
 
     const create = createDate()
 
-    if (create[0]) {
-      console.log('DataCreated',checkIfIsEdit(create[1]))
-      checkSuccess(checkIfIsEdit(create[1]))
+    if (create[0] || isDelete) {
+      // console.log('DataCreated',checkIfIsEdit(create[1]))
+      if (!isDelete) checkSuccess(checkIfIsEdit(create[1]))
+      else checkSuccess(checkIfIsEdit({}))
       // onAddCalendarDate(create[1],currentUser,checkSuccess,checkError)
       setOpen(false)
       setHoursSelected((new Date()).getHours())
@@ -460,6 +505,10 @@ export default function DateSelection({open,setOpen,onConfirm,dataCard}) {
     setValue(event.target.value);
   };
 
+  const onDelete = () => {
+    onAddTime(true)
+  };
+
   return (
     <ModalButtons
       open={Boolean(open)}
@@ -468,6 +517,8 @@ export default function DateSelection({open,setOpen,onConfirm,dataCard}) {
       dontCloseOnConfirm={true}
       onClose={onCloseModalAdd}
       title={'Novo Horário'}
+      extraBnt={'Deletar'}
+      extraOnClick={onDelete}
       padding={'large'}
   >
     <div style={{backgroundColor:'#fff',padding:0}}>
@@ -486,7 +537,7 @@ export default function DateSelection({open,setOpen,onConfirm,dataCard}) {
           <span style={{zIndex:110,marginBottom:5,display:'inline-block'}}>
             Tipo de atendimento:
           </span>
-          <div>
+          <div style={{maxWidth:'600px',flexDirection:'row',display:'flex',flexWrap:'wrap'}}>
             {consultArray.map(item=>{
               return (
                 <div key={item} style={{minWidth:300,flexDirection:'column',marginTop:10,marginBottom:20}}>
@@ -508,7 +559,7 @@ export default function DateSelection({open,setOpen,onConfirm,dataCard}) {
             }
           </div>
         </div>
-        <div style={{minWidth:300,flexDirection:'column',marginBottom:0}}>
+        {/* <div style={{minWidth:300,flexDirection:'column',marginBottom:0}}>
           <span style={{zIndex:110,marginBottom:5,display:'inline-block'}}>
             Local de atendimento:
           </span>
@@ -522,18 +573,24 @@ export default function DateSelection({open,setOpen,onConfirm,dataCard}) {
               variant="outlined"
             />
             </div>
-        </div>
+        </div> */}
       </div>
 
       <div style={{flexDirection:'row',display:'flex',alignItems:'center',justifyContent:"flex-start",marginTop:20}}>
         <DateWeekDaySelector
+          text={(checked || daysSelected.length>1) ? 'Data de início dos atendimentos':'Data do atendimento'}
           dateInput={dateInput}
           setDateInput={handleDateChange}
           yearShow
         />
-        <div style={{marginBottom:-13}}>
+        <div style={{marginBottom:0}}>
           <span style={{zIndex:110,marginBottom:5,display:'inline-block'}}>Horário de início do atendimento</span>
-          <HoursSelection setMin={setMinutesSelected} setHour={setHoursSelected} min={minutesSelected} hour={hoursSelected}/>
+          <HoursSelection
+            setMin={setMinutesSelected}
+            setHour={setHoursSelected}
+            min={minutesSelected}
+            hour={hoursSelected}
+          />
         </div>
       </div>
 
@@ -675,6 +732,7 @@ export default function DateSelection({open,setOpen,onConfirm,dataCard}) {
         </div>
       </div>
       }
+      {/* <ContinueButton onClick={onDelete} style={{  marginRight:'15px',marginBottom:'-15px',transform:'translateY(2px)'}}>Deletar</ContinueButton> */}
     </div>
   </ModalButtons>
   )

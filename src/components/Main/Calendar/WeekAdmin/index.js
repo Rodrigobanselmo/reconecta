@@ -1,11 +1,10 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useContext, useState } from 'react';
 
 import useCalendar from '../../../../hooks/useCalendar';
 import IconButton from '@material-ui/core/IconButton';
 import {Icons} from '../../../Icons/iconsDashboard'
 import NewIconButton from '../../Buttons/NewIconButton'
 import { darken, fade } from "@material-ui/core/styles";
-import styled, {css} from "styled-components";
 import {ModalButtons} from '../../MuiHelpers/ModalButtons'
 import Modal from './Modal'
 import {InputDate} from '../../MuiHelpers/Input'
@@ -13,6 +12,7 @@ import { DatePicker } from "@material-ui/pickers";
 import {EspecialSelector} from '../../MuiHelpers/EspecialSelector'
 import { CardDiv,ContainerWeekdays,ContainerWeek,Header,Week,CalendarContainer, } from './styles'
 import Input, {SelectedEnd} from '../../MuiHelpers/Input'
+import {useLoaderDashboard} from '../../../../context/LoadDashContext'
 import Checkbox from '@material-ui/core/Checkbox';
 import DateWeekDaySelector from '../Components/DateWeekDaySelector'
 import HoursSelection from '../Components/HourSelector'
@@ -21,6 +21,12 @@ import ModalPick from '../Components/ModalPick'
 import { useSelector,useDispatch } from 'react-redux'
 import {BootstrapTooltip} from '../../MuiHelpers/Tooltip'
 import {AddUserButton} from '../../Table/comp'
+import {ContinueButton} from '../../MuiHelpers/Button'
+import CircularProgress from '@material-ui/core/CircularProgress';
+import styled, {ThemeContext} from "styled-components";
+import {onAddCalendarDate, onGetCalendarDate} from './func'
+import {useNotification} from '../../../../context/NotificationContext'
+import { useAuth } from '../../../../context/AuthContext'
 
 const sortTime = function (a, b) {
   if (parseInt(a.split(':')[0]) > parseInt(b.split(':')[0])) {
@@ -37,6 +43,7 @@ const sortTime = function (a, b) {
   }
   return 0;
 };
+
 
 
 const initialValue={
@@ -61,14 +68,25 @@ const initialValue={
 const Calendar = () => {
 
   const calendar = useSelector(state => state.calendar)
+  const route = useSelector(state => state.route)
+  const save = useSelector(state => state.save)
+  const dispatch = useDispatch()
+  const { setLoaderDash } = useLoaderDashboard();
+  const {currentUser} = useAuth();
+  const notification = useNotification();
 
   const { calendarRows, selectedDate, todayFormatted, daysShort, monthNames, getTodayMonth, getNextMonth, getPrevMonth } = useCalendar();
-  const [selected, setSelected] = React.useState(todayFormatted)
-  const [oldSelected, setOldSelected] = React.useState(null)
-  const [oldWeek, setOldWeek] = React.useState(null)
-  const [dataCard, setDataCard] = React.useState(initialValue)
-  const [open, setOpen] = React.useState(false)
+  const [selected, setSelected] = useState(todayFormatted)
+  const [oldSelected, setOldSelected] = useState(null)
+  const [oldWeek, setOldWeek] = useState(null)
+  const [dataCard, setDataCard] = useState(initialValue)
+  const [open, setOpen] = useState(false)
+  const theme = useContext(ThemeContext)
 
+  React.useEffect(() => {
+      onGetCalendarDate({currentUser,notification,dispatch,setLoaderDash})
+  }, [])
+  // }, [route])
   // React.useEffect(() => {
 
   //   if ()
@@ -199,6 +217,12 @@ const Calendar = () => {
     if (dataCard!=initialValue) setOpen(true)
   }, [dataCard])
 
+  const [loading, setLoading] = useState(false)
+
+  function onSave() {
+    onAddCalendarDate({calendar,currentUser,notification,setLoad:setLoading,dispatch})
+  }
+
   return(
     <>
     <CalendarContainer>
@@ -218,12 +242,17 @@ const Calendar = () => {
             </IconButton>
           </div>
           <p style={{marginRight:10,minWidth:120}}>{`${monthNames[selectedDate.getMonth()]} ${selectedDate.getFullYear()}`}</p>
+          <AddUserButton onClick={onAddButton} text={'Novo horário'} icon={'Add'} width={160} />
         </div>
         {/* <NewIconButton
           onClick={()=>setOpen(true)}
         /> */}
-        <AddUserButton onClick={onAddButton} text={'Novo horário'} icon={'Add'} width={160} />
-
+        <div style={{position: 'relative'}}>
+            <ContinueButton disable={`${loading || !save}`} style={{width:100,padding:2.5,opacity:loading?0.6:1}} onClick={onSave} primary={!save?'outlined':'true'} size={'medium'}>
+              Salvar
+            </ContinueButton>
+            {loading && <CircularProgress size={24} style={{color: theme.palette.primary.main,position: 'absolute',top: '50%',left: '50%',marginTop: -12,marginLeft: -12,}} />}
+          </div>
 
       </Header>
       {Object.values(calendarRows).map((cols) => {
@@ -232,10 +261,11 @@ const Calendar = () => {
           <Week key={cols[0].date}>
             {cols.map((col,index) => {
               const isToday = col.date === todayFormatted;
+              const isOldDay = (parseInt(col.date.split('-')[0])/10+parseInt(col.date.split('-')[1])*10+parseInt(col.date.split('-')[1])*1000) < (parseInt(todayFormatted.split('-')[0])/10+parseInt(todayFormatted.split('-')[1])*10+parseInt(todayFormatted.split('-')[1])*1000)
               const toHide = (index==6||index==5)&&!(calendar && calendar[col.date] &&  Object.keys(calendar[col.date].time).length > 0)
               return (
-              <ContainerWeek key={col.date} last={index==6} hide={toHide}>
-                <ContainerWeekdays today={isToday}>
+              <ContainerWeek key={col.date} oldDay={isOldDay} last={index==6} hide={toHide}>
+                <ContainerWeekdays oldDay={isOldDay} today={isToday}>
                   <span>{col.value}</span>
                   <p style={{textAlign:'left',paddingLeft:5,fontSize:14,fontWeight:'bold'}} >
                     {daysShort[index]}
@@ -255,7 +285,7 @@ const Calendar = () => {
                       filll={space=='fill'}
                       toConfirm={space=='toConfirm'}
                       cancel={space=='cancel'}
-                      prev={formatDate(col.date)<new Date('5/26./2021')}
+                      prev={formatDate(col.date)<new Date((new Date()).setHours(0,0,0,0))}
                       // prev={col.classes.includes('in-prev-month')}
                     >
                       <p>{dateKey}</p>

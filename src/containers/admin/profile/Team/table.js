@@ -5,6 +5,7 @@ import styled from "styled-components";
 
 const TableComponent = React.memo(({rowsCells,loadContent,search,setSelected,selected,handleCellClick}) => {
 
+  console.log(rowsCells)
   const headCells = [
     { id: 'name', label: 'Usuário',minWidth:300,flex:7, type:'user'},
     { id: 'type',  label: 'Tipo',minWidth:220,flex:5},

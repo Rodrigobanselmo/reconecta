@@ -6,7 +6,7 @@ export function AbreviarNome(fullName,limit) {
         }
         return fullName;
     }
-      
+
     function abreviar(str) {
         const [nome, ...sobrenomes] = str.split(' ');
         const abreviaturas = sobrenomes.reduce((arr, str) => {
@@ -22,7 +22,7 @@ export function AbreviarNome(fullName,limit) {
             return [nome, ...abr,latName].join(' ');
         }
     }
-            
+
     return abreviarControl()
 }
 
@@ -34,7 +34,7 @@ export function AbreviarSobrenome(fullName,limit) {
         }
         return fullName;
     }
-      
+
     function abreviar(str) {
         const [...sobrenomes] = str.split(' ');
         const abreviaturas = sobrenomes.reduce((arr, str) => {
@@ -50,7 +50,7 @@ export function AbreviarSobrenome(fullName,limit) {
             return [...abr,latName].join(' ');
         }
     }
-            
+
     return abreviarControl()
 }
 
@@ -59,7 +59,7 @@ export function InitialsName(fullName) {
     function abreviarControl() {
         return abreviar(fullName);
     }
-      
+
     function abreviar(str) {
         const [...sobrenomes] = str.split(' ');
         const abreviaturas = sobrenomes.reduce((arr, str) => {
@@ -71,7 +71,7 @@ export function InitialsName(fullName) {
         var latName = abreviaturas.slice(-1)
             return [...abr,latName].join('');
     }
-            
+
     return abreviarControl()
 }
 
@@ -82,12 +82,12 @@ export function Colocar3dots(value,maxlimit) {
     } else {
         return value
     }
-            
+
 }
 
 export function wordUpper(arrWords) {
 	var ignore = ['de', 'da', 'das', 'do', 'dos','a','e','o'];
-	
+
 	for (var i in arrWords) {
 		if (ignore.indexOf(arrWords[i]) === -1) {
 			arrWords[i] = arrWords[i].charAt(0).toUpperCase() + arrWords[i].toLowerCase().slice(1);
@@ -104,13 +104,14 @@ export function keepOnlyNumbers(str) {
         if (result) {
             return ('').concat(...result);
         }
-    } 
+    }
+    return ''
 }
 
 export function formatTel(num) {
     var length = (`${num}`).length;
     var telefoneFormatado = num;
-    
+
     if (length === 10) {
     telefoneFormatado = '(' + (`${num}`).substring(0, 2) + ') ' + (`${num}`).substring(2, 6) + '-' + (`${num}`).substring(6, 10);
     } else if (length === 11) {
@@ -122,7 +123,7 @@ export function formatTel(num) {
 export function formatCPFeCNPJeCEPeCNAE(num) {
     var length = (`${num}`).length;
     var numFormat = num;
-    
+
     if (length === 11) { //cpf
         numFormat = (`${num}`).substring(0, 3) + '.' + (`${num}`).substring(3, 6) + '.' + (`${num}`).substring(6, 9) + '-' + (`${num}`).substring(9, 11);
     } else if (length === 14) { //cnpj

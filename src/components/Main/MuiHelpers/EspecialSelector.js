@@ -54,6 +54,11 @@ const Selector = styled.div`
     flex:1;
     font-size:14px;
   }
+
+  ${props => !!props.inputStyle && css`
+    border: 1px solid  #8f8f9c99;
+    height:  42px;
+  `}
 `;
 
 
@@ -99,7 +104,7 @@ const ItemsContainer = styled.div`
 `;
 
 
-export function EspecialSelector({options=[],defaultValue=[],hideSelectAll,bottom,width='100%',isSimpleSelection,onSelectFunction,onSearch,override,isToMany,...rest}) {
+export function EspecialSelector({options=[],inputStyle,selectedValue,defaultValue=[],hideSelectAll,bottom,width='100%',isSimpleSelection,onSelectFunction,onSearch,override,isToMany,...rest}) {
 
     const [selected, setSelected] = useState(defaultValue);
     const [search, setSearch] = useState('')
@@ -202,10 +207,16 @@ export function EspecialSelector({options=[],defaultValue=[],hideSelectAll,botto
   return (
       <ClickAwayListener onClickAway={onClickAway}>
         <div style={{position:'relative',cursor:'pointer',width}}>
-          <Selector onClick={()=>setIsOpen(isOpen?false:true)} >
+          <Selector inputStyle={inputStyle} onClick={()=>setIsOpen(isOpen?false:true)} >
+            {!selectedValue ?
             <p style={{opacity:!selected.includes('all')?selected.length>0?1:0.6:1}}>
               {!selected.includes('all')?selected.length>0? <><span>{text.select}: </span><strong>{selected.length}</strong></>:text.selectSomeItems:<><span>{text.select}: </span><strong>Todos</strong></>}
             </p>
+            :
+            <p style={{opacity:!selected.includes('all')?selected.length>0?1:0.6:1}}>
+              {selectedValue?selectedValue:'Selecione'}
+            </p>
+            }
             <Icons style={{fontSize:25}} type={`KeyboardArrowDownIcon`}/>
           </Selector>
           <>

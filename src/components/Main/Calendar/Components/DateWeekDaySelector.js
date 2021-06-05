@@ -30,6 +30,7 @@ export default function DateSelection({dateInput,yearShow,setDateInput,text='Dat
       <span style={{zIndex:110,marginBottom:5,display:'inline-block'}}>{text}</span>
       <DateRow>
         <DatePicker
+          maxDate={(new Date()).setDate((new Date()).getDate() + 365)}
           style={{width:160+getMonth(dateInput),zIndex:111,textAlign:'center'}}
           disableToolbar
           variant="inline"

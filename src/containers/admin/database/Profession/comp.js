@@ -6,12 +6,11 @@ import {
 } from './styles';
 import NewTabs, {TabPanel} from '../../../../components/Main/MuiHelpers/NewTabs'
 import {FilterComponent,LoadingContent,AddUserButton} from '../../../../components/Main/Table/comp'
-import {onGetAllUsersCompany} from './func'
+// import {onGetAllUsersCompany} from './func'
 import {Link} from "react-router-dom";
 import {keepOnlyNumbers} from '../../../../helpers/StringHandle';
-import { ADMIN_PERFIL } from '../../../../routes/routesNames';
 import {useHistory} from "react-router-dom";
-import TableComponent from './table.js';
+// import TableComponent from './table.js';
 
 export function Container({children}) {
     return (
@@ -24,20 +23,18 @@ export function Container({children}) {
 
 export function TableContainer({setSelected,selected,dataRows,setDataRows,tabsLabel,setOpen,currentUser,notification,setLoad,setLoaderDash}) {
 
-  const [loadContent, setLoadContent] = React.useState(true)
+  const [loadContent, setLoadContent] = React.useState(false) //true
   const [search, setSearch] = React.useState('')
   const [tabValue, setTabValue] = React.useState(0);
   const history = useHistory();
 
   React.useEffect(() => {
-    onGetAllUsersCompany(currentUser,setDataRows,setLoadContent,notification,setLoaderDash)
+    // onGetAllUsersCompany(currentUser,setDataRows,setLoadContent,notification,setLoaderDash)
   }, [])
 
-  function handleCellClick(e,rowId,item) {
-    setLoaderDash(true)
-    if (currentUser.uid == rowId) return history.push(ADMIN_PERFIL);
-    if (item.status == 'Aguardando Autenticação') return history.push(`${ADMIN_PERFIL}/${item.email}`);
-    history.push(`${ADMIN_PERFIL}/${rowId}`);
+  function handleCellClick(e,rowId) {
+    //history.push(`${COMPANY}/${keepOnlyNumbers(rowId)}/0`);
+    //setLoaderDash(true)
   }
 
   return (
@@ -64,14 +61,14 @@ export function TableContainer({setSelected,selected,dataRows,setDataRows,tabsLa
           <LoadingContent />
         :
           <TabPanel key={0} value={tabValue} index={0} >
-            <TableComponent
+            {/* <TableComponent
               rowsCells={dataRows}
               selected={selected}
               setSelected={setSelected}
               loadContent={loadContent}
               search={search}
               handleCellClick={handleCellClick}
-            />
+            /> */}
           </TabPanel>
       }
       </div>

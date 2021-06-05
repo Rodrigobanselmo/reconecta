@@ -1,172 +1,79 @@
 import {errorCatch} from './firestoreUser'
 import { db } from '../lib/firebase.prod.js';
+import {v4} from "uuid";
 
-export function AddCalendarDate(
-  data,
-  currentUser,
-  checkSuccess,
-  checkError,
-) {
-  const array = [];
-  const date = new Date();
-  const batch = db.batch();
-  data.array.map((item) => {
-    if (item?.id && item.id) {
-      const pendingUsers = db.collection('users').doc(item.id);
-      batch.update(pendingUsers, {
-        type: item.type,
-        creation: { start: date - 1, end: 0 },
-        status: 'Ativo',
-        access: item.access,
-        permissions: item.access,
-        image: item.icon,
-      });
-    } else {
-      const pendingUsers = db.collection('users').doc(item.email);
-      batch.set(pendingUsers, {
-        email: item.email,
-        type: item.type,
-        creation: { start: date - 1, end: 0 },
-        status: 'Aguardando Autenticação',
-        access: 'admin',
-        permissions: item.access,
-        name: '',
-        image: item.icon,
-        uid: '',
-      });
+
+function formatDate(date) {
+  var formatDate = date.split('-')
+  var restFormatDate = formatDate.splice(1,1)
+  restFormatDate.push(...formatDate)
+  formatDate = restFormatDate.join('/')
+  return new Date(formatDate)
+}
+
+export function AddCalendarDate(calendar,currentUser,checkSuccess,checkError,) {
+
+  var batch = db.batch();
+
+  const numberOfData = 500
+  const metadata =  {id:calendar.id,name:calendar.name,photoURL:calendar.photoURL,onlyPast:false}
+  const objArrayCalendar = Object.keys(calendar);
+
+  const DATA = {}
+  var COUNT = 1
+  objArrayCalendar.map((item,index)=>{
+    if (calendar[item]?.time && !DATA[`${Math.ceil((COUNT)/numberOfData)}page`]) {
+      DATA[`${Math.ceil((COUNT)/numberOfData)}page`] = {[item]:calendar[item],...metadata}
+      COUNT = COUNT + Object.keys(calendar[item].time).length
+    } else if (calendar[item]?.time &&  DATA[`${Math.ceil((COUNT)/numberOfData)}page`]) {
+      DATA[`${Math.ceil((COUNT)/numberOfData)}page`][item] = calendar[item]
+      const newCount = COUNT + Object.keys(calendar[item].time).length
+      if (Math.ceil((COUNT)/numberOfData) != Math.ceil((newCount)/numberOfData) && formatDate(item)<(new Date((new Date()).setHours(0,0,0,0)))) {
+        DATA[`${Math.ceil((COUNT)/numberOfData)}page`] = {...DATA[`${Math.ceil((COUNT)/numberOfData)}page`],onlyPast:true}
+      }
+
+      COUNT = newCount
     }
-    array.push({
-      email: item.email,
-      type: item.type,
-      creation: date,
-      status: 'Aguardando Autenticação',
-      access: 'admin',
-      permissions: item.access,
-      name: '',
-      image: item.icon,
-      uid: '',
-    });
+  })
+  console.log('DATA',DATA)
+  //   checkSuccess()
+  // const uid = v4()
+
+  Object.keys(DATA).map((item)=>{
+    var calendarRef = db.collection("calendar").doc(`${item}${currentUser.uid}`) //currentUser.uid
+    batch.set(calendarRef,{...DATA[item]})
+  })
+
+  calendar.docId.map((item)=>{
+    // console.log('DATA[item]',item,DATA[item.replace(currentUser.uid,'')])
+    if (!DATA[DATA[item.replace(currentUser.uid,'')]]) {
+      var calendarRef = db.collection("calendar").doc(`${item}`) //currentUser.uid
+      batch.delete(calendarRef)
+    }
+  })
+  calendar
+
+  batch.commit().then(() => {
+    checkSuccess()
+  }).catch((error) => {
+    checkError(errorCatch(error))
   });
 
-  batch
-    .commit()
-    .then(() => {
-      checkSuccess(array);
-    })
-    .catch((error) => {
-      checkError(errorCatch(error));
-    });
 }
 
-export function AddUserData(
-  data,
-  uid,
-  checkSuccess,
-  checkError,
-) {
-  const userRef = db.collection('users').doc(uid);
+export function GetCalendarDate(user,checkSuccess,checkError) {
 
-  userRef
-    .update({
-      ...data,
-    })
-    .then(() => {
-      checkSuccess('Document successfully updated!');
-    })
-    .catch((error) => {
-      checkError(errorCatch(error));
-      console.error('Error updating document: ', error);
+  const calendarRef = db.collection('calendar');
+  calendarRef.where('id', '==', user.uid).get().then(function (querySnapshot) { //.where('onlyPast', '==', false)
+    let response = {docId:[]};
+    querySnapshot.forEach(function (doc) {
+      const DATA = doc.data()
+      response = {...response,...DATA,docId:[...response.docId,doc.id]}
     });
-}
-
-export function GetUserData(
-  user,
-  checkSuccess,
-  checkError,
-) {
-  const usersRef = db.collection('users').doc(user.uid);
-  const date = new Date();
-
-  function checkPendingUser() {
-    const usersEmailRef = db.collection('users').doc(user.email);
-    usersEmailRef
-      .get()
-      .then((docSnapshots) => {
-        if (docSnapshots.exists) {
-          const docSnapshot = docSnapshots.data();
-          db.collection('users')
-            .doc(user.uid)
-            .set({
-              uid: user.uid,
-              email: user.email,
-              type: docSnapshot?.type,
-              creation: { start: date - 1, end: 0 },
-              status: 'Ativo',
-              access: docSnapshot?.access,
-              image: docSnapshot?.image,
-              name: '',
-            })
-            .then(() => {
-              checkSuccess(
-                {
-                  uid: user.uid,
-                  email: user.email,
-                  type: docSnapshot?.type,
-                  creation: { start: date - 1, end: 0 },
-                  status: 'Ativo',
-                  access: docSnapshot?.access,
-                  name: '',
-                  image: docSnapshot?.image,
-                },
-                user,
-              );
-              usersEmailRef.delete().then(() => console.log('user deleted'));
-            })
-            .catch((err) => {
-              checkError(errorCatch(err));
-            });
-        } else {
-          usersRef
-            .set({
-              email: user.email,
-              name: '',
-              uid: user.uid,
-              info: {},
-            })
-            .then(() => {
-              checkSuccess(
-                {
-                  email: user.email,
-                  uid: user.uid,
-                  name: '',
-                  info: {},
-                },
-                user,
-                true,
-              );
-            })
-            .catch((err) => {
-              checkError(errorCatch(err));
-            });
-        }
-      })
-      .catch((err) => {
-        checkError(errorCatch(err));
-      });
-  }
-
-  usersRef
-    .get()
-    .then((docSnapshot) => {
-      if (docSnapshot.exists) {
-        checkSuccess(docSnapshot.data(), user);
-      } else {
-        checkPendingUser();
-      }
-    })
-    .catch((error) => {
-      checkError(errorCatch(error));
-    });
+    checkSuccess(response);
+  }).catch((error) => {
+    checkError(errorCatch(error));
+  });
 }
 
 export function SeeIfUserExists(

@@ -1,7 +1,8 @@
 import {
   HOME_ADMIN,
   TEAM,
-  CALENDAR_ADMIN
+  CALENDAR_ADMIN,
+  ADMIN_PROFESSION
 } from '../routes/routesNames'
 
 const itemsList = [
@@ -17,8 +18,16 @@ const itemsList = [
     text: "Equipe",
     description:'Gerenciar equipe',
     to:TEAM,
-    icon: 'Person',
+    icon: 'Group',
     id:TEAM,
+    onClick: () => {}
+  },
+  {
+    text: "Profissões",
+    description:'Gerenciar profissões e atividade',
+    to:ADMIN_PROFESSION,
+    icon: 'Person',
+    id:ADMIN_PROFESSION,
     onClick: () => {}
   },
   {

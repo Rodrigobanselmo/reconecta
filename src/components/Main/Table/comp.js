@@ -183,7 +183,7 @@ export function LoadingContent({margin=10}) {
   );
 }
 
-export function AddUserButton({onClick,width=165,text='Nova Empresa',icon='Add',...restProps}) {
+export function AddUserButton({onClick,width=165,text='Novo Usuário',icon='Add',...restProps}) {
 
   return (
     <ButtonContainer onClick={onClick} width={width} className={'rowCenter'}  {...restProps}>
@@ -193,7 +193,7 @@ export function AddUserButton({onClick,width=165,text='Nova Empresa',icon='Add',
   )
 }
 
-export function AddTextButton({onClick,initialWidth='52px',width=165,text='Nova Empresa',shortText='GHE',...restProps}) {
+export function AddTextButton({onClick,initialWidth='52px',width=165,text='Novo Usuário',shortText='GHE',...restProps}) {
 
   return (
     <ButtonContainer initialWidth={initialWidth} onClick={onClick} width={width} className={'rowCenter'}  {...restProps}>

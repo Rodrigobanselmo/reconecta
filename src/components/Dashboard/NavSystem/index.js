@@ -19,7 +19,6 @@ import {BootstrapTooltip} from '../../Main/MuiHelpers/Tooltip'
 import { Link } from 'react-router-dom';
 import {itemsProfile} from '../../../constants/itemsProfile'
 import {useLoaderScreen} from '../../../context/LoaderContext'
-//import {useLoaderDash} from '../../../context/LoadDashContext'
 import {useNotification} from '../../../context/NotificationContext'
 import {useAuth} from '../../../context/AuthContext'
 import {navList} from '../../../constants/itemsNav'
@@ -31,9 +30,11 @@ import {useStyles,DarkModeSwitch as DarkModeSwitchMui} from './styles'
 import {onLogout} from './func'
 import {Icons} from '../../Icons/iconsDashboard'
 
-import {DASHBOARD} from '../../../routes/routesNames'
+import {DASHBOARD,ADMIN_PERFIL} from '../../../routes/routesNames'
 import {AbreviarNome,InitialsName} from '../../../helpers/StringHandle'
 import usePersistedState from '../../../hooks/usePersistedState.js';
+import {useLoaderDashboard} from '../../../context/LoadDashContext'
+import { useHistory } from "react-router-dom"
 import {ThemeContext} from "styled-components";
 
 export default function NavBar({open,setOpen}) {
@@ -41,6 +42,8 @@ export default function NavBar({open,setOpen}) {
   const [openProfile, setOpenProfile] = React.useState(false);
   const [darkMode, setDarkMode] = React.useState(true);
   const anchorRef = React.useRef(null);
+  const { setLoaderDash } = useLoaderDashboard();
+  const history = useHistory()
 
   const {load,setLoad} = useLoaderScreen();
   //const {setLoadDash,loadDash}= useLoaderDash();
@@ -76,7 +79,12 @@ export default function NavBar({open,setOpen}) {
   };
 
   function onProfileClick(action) {
-    action ==='logout' && onLogout({setLoad,notification})
+    if (action === 'logout') onLogout({setLoad,notification})
+    if (action === 'perfil') {
+      history.push(ADMIN_PERFIL)
+      setOpenProfile(false)
+      setLoaderDash(true)
+    }
   };
 
   const handleDarkModeChange = () => {
@@ -144,9 +152,15 @@ export default function NavBar({open,setOpen}) {
           </div>
           <div ref={anchorRef} onClick={()=>setOpenProfile(true)} className={classes.profileContainer}>
             <div className={classes.profile}>
+                {!currentUser?.photoURL ?
+              <div>
                 <p className={classes.profileCircleName} style={{fontSize:17}}>
                   {currentUser?.name ? InitialsName(currentUser.name,22) : 'SI'}
                 </p>
+              </div>
+            :
+              <img style={{height:44,width:44,borderRadius:'50%'}} src={currentUser.photoURL} alt={'perfil_photo'} />
+            }
                 {/* <Icons className={classes.profileCircleName} type={'Person'}/> */}
             </div>
           </div>

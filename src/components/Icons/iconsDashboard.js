@@ -50,7 +50,8 @@ import MoreVertRoundedIcon from '@material-ui/icons/MoreVertRounded';
 import CameraAltOutlinedIcon from '@material-ui/icons/CameraAltOutlined';
 import PriorityHighIcon from '@material-ui/icons/PriorityHigh';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
-
+import {FiUser as Avatar } from 'react-icons/fi';
+// import Avatar from '@material-ui/icons/PersonOutlineOutlined';
 import Facebook from '@material-ui/icons/Facebook';
 import WhatsApp from '@material-ui/icons/WhatsApp';
 import YouTube from '@material-ui/icons/YouTube';
@@ -144,6 +145,8 @@ export const Icons = ({ type, ...props }) => {
       return <Group {...props} />;
     case 'Person':
       return <Person {...props} />;
+    case 'Avatar':
+      return <Avatar {...props} />;
     case 'KeyboardArrowRightIcon':
       return <KeyboardArrowRightIcon {...props} />;
     case 'KeyboardArrowLeft':

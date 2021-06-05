@@ -132,7 +132,23 @@ export default function Input({validation=false,status,icon,width='100%',title='
     );
 }
 
-export function InputEnd({validation=false,option=false,marginTop=10,marginBottom=10,labelWidth,label,status,icon,width='100%',title='OK',iconProps,...props}) {
+export function InputEnd({validation=false,iconStart,titleStart='',statusStart,option=false,marginTop=10,marginBottom=10,labelWidth,label,status,icon,width='100%',title='OK',iconProps,...props}) {
+
+  const startInd = statusStart?{
+    startAdornment:(
+      <InputAdornment >
+        {statusStart=='money'?
+          'R$'
+        :
+        <BootstrapTooltip placement="bottom" TransitionProps={{ timeout: {enter:500, exit: 50} }} title={titleStart} styletooltip={{transform: 'translateY(0px)'}}>
+            <div>
+                <IconStart style={{fontSize:22,transform:'translateY(2px)'}} status={statusStart} type={iconStart}/>
+            </div>
+        </BootstrapTooltip>
+        }
+      </InputAdornment>
+    )
+  }:{}
 
     return (
         <FormControl style={{width:width,marginTop,marginBottom}} variant="outlined">
@@ -151,6 +167,7 @@ export function InputEnd({validation=false,option=false,marginTop=10,marginBotto
                 }
               </InputAdornment>
             }
+            {...startInd}
             labelWidth={labelWidth+(option===true?60:0)}
             {...props}
           />
@@ -292,7 +309,7 @@ export function SelectedEnd({selected,setData,sliceItems=false,label,data=[],mar
 //     );
 // }
 
-export function InputUnform({onChange,iconStart,statusStart,positionIcon='end',name,validation=false,option=false,titleStart='',marginTop=10,marginBottom=10,labelWidth,label,status,icon,width='100%',title='',...props}) {
+export function InputUnform({onChange,iconStart,statusStart,variant,positionIcon='end',name,validation=false,option=false,titleStart='',marginTop=10,marginBottom=10,labelWidth,label,status,icon,width='100%',title='',...props}) {
 
   const fieldRef = useRef()
   const inputRef = useRef()
@@ -343,17 +360,21 @@ export function InputUnform({onChange,iconStart,statusStart,positionIcon='end',n
   const startInd = statusStart?{
     startAdornment:(
       <InputAdornment >
+        {statusStart=='money'?
+          'R$'
+        :
         <BootstrapTooltip placement="bottom" TransitionProps={{ timeout: {enter:500, exit: 50} }} title={titleStart} styletooltip={{transform: 'translateY(0px)'}}>
             <div>
                 <IconStart style={{fontSize:22,transform:'translateY(2px)'}} status={statusStart} type={iconStart}/>
             </div>
         </BootstrapTooltip>
+        }
       </InputAdornment>
     )
   }:{}
 
   return (
-      <FormControl style={{width:width,marginTop,marginBottom}} variant="outlined">
+      <FormControl style={{width:width,minWidth:width,marginTop,marginBottom}} variant="outlined">
         <InputLabelEnd margin={'dense'} htmlFor={id} >{label}{option && <span style={{fontSize:10,verticalAlign:'middle',marginLeft:8}}>{option===true?'(OPCIONAL)':`(${option})`}</span>}</InputLabelEnd>
         <OutlinedInputEnd
           autoComplete='off'

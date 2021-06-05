@@ -4,31 +4,11 @@ import {useNotification} from '../../context/NotificationContext'
 import {useLoaderScreen} from '../../context/LoaderContext'
 import { useAuth } from '../../context/AuthContext'
 
-import Carrousel from '../../components/Main/Carrousel/CarrouselFirst'
-import Page from './comp'
-import {onAddUserData} from './func'
+import Carrousel, {PagesDiv} from '../../components/Main/Carrousel/CarrouselFirst'
+import Page, {FirstForm,SecondForm,ThirdForm,BanksForm} from './comp'
+import {onAddUserData,onUpdateProfile} from './func'
 import { onLogout } from '../../components/Dashboard/NavSystem/func';
 import styled from "styled-components";
-
-const PagesDiv = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  max-width: 800px;
-  margin: auto;
-  overflow-y:auto;
-  max-height:80vh;
-
-  @media screen and (min-width: 800px) {
-    min-width: 400px
-  }
-  @media screen and (min-width: 500px) {
-    min-width: 300px
-  }
-  @media screen and (min-width: 1000px) {
-    min-width: 600px
-  }
-`;
 
 const initialData =[{data:'',name:'Nome',status:'',message:'',placeholder:'Nome',required:true},{data:'',name:'Sobrenome',status:'',message:'',placeholder:'Sobrenome',required:true},{data:'',name:'CPF',status:'',message:'',placeholder:'000.000.000-00',required:true}]
 const engineryData = {data:'',name:'CREA',status:'OK',message:'',placeholder:'CREA'}
@@ -72,29 +52,20 @@ const finalData = {
 export default function InputUserData() {
 
     const [data, setData] = useState([...initialData])
+    const {currentUser,setCurrentUser} = useAuth();
     const [infoModal, setInfoModal] = useState({title:'Você tem certeza?',text:'Ao sair você irá pausar sua inscrição e poderá perder as informaçoes inseridas até o momento.'}) //para mandar pro modalFullScreen e dizer se ao fechar da um alerta
     const [position, setPosition] = useState(1)
     const [checked, setChecked] = useState(false);
-    const [unform, setUnform] = useState({uf:'AC'})
+    const [unform, setUnform] = useState({uf:'AC',address:{},bankAccount:{type:'Conta corrente',juridica:'false'},...currentUser})
 
-    const {currentUser,setCurrentUser} = useAuth();
     const {setLoad} = useLoaderScreen();
     const notification = useNotification();
 
-    // useEffect(() => {
-    //     if (currentUser && currentUser?.type) {
-    //         const dt = [...initialData]
-    //         if (currentUser.type === 'Engenheiro de Segurança') dt.push(engineryData)
-    //         if (currentUser.type === 'Médico do Trabalho') dt.push(doctorData)
-    //         if (currentUser.type === 'Enfermeiro do Trabalho') dt.push(nurseData)
-    //         setData([...dt])
-    //     } else {
-    //         setData([...initialData])
-    //     }
-    // }, [])
-
     function onAddData() {
         onAddUserData({unform,currentUser,setCurrentUser,setLoad,notification})
+    }
+    function onUploadProfile(image) {
+      onUpdateProfile({image,setUnform,currentUser,setCurrentUser,setLoad,notification})
     }
 
     function onFirstForm(dataForm) {
@@ -114,33 +85,45 @@ export default function InputUserData() {
 
     return (
         <Page>
-            <Carrousel sections={4} position={position}>
-                <PagesDiv >
+          {unform&&
+            <>
+            <Carrousel sections={5} position={position}>
+                <PagesDiv overflowTrue>
                     <div style={{display:'flex',flex:1,width:'100%',flexDirection:'column',margin:'0px 20px'}}>
                         <Page.Header
                           text='Dados Pessoais'
                           subText='Preencha com seus dados pessoais para prosseguir'
                         />
-                        <Page.FirstForm unform={unform} setUnform={onFirstForm}/>
+                        <FirstForm onUploadProfile={onUploadProfile} notification={notification} unform={unform} setUnform={onFirstForm}/>
                         {/* <Page.Continue data={data} setInfoModal={setInfoModal} notification={notification} setPosition={setPosition}/> */}
                     </div>
                 </PagesDiv>
-                <PagesDiv >
+                <PagesDiv overflowTrue>
                     <div style={{display:'flex',flex:1,width:'100%',flexDirection:'column',margin:'0px 20px'}}>
                         <Page.Header
                           text='Dados de Endereço'
-                          subText='Informe seu endereço para prosseguir'
+                          subText='Informe seu endereço para receber correspondências'
                         />
-                        <Page.SecondForm unform={unform} setUnform={setUnform} onSecondForm={onSecondForm}/>
+                        <SecondForm unform={unform} setUnform={setUnform} onSecondForm={onSecondForm}/>
                     </div>
                 </PagesDiv>
-                <PagesDiv >
+                <PagesDiv overflowTrue>
+                    <div style={{display:'flex',flex:1,width:'100%',flexDirection:'column',margin:'0px 20px'}}>
+                        <Page.Header
+                          text='Dados Bancários'
+                          subText='Preencha com seus dados bancários para prosseguir'
+                        />
+                        <BanksForm setPosition={setPosition} notification={notification} unform={unform} setUnform={setUnform}/>
+                        {/* <Page.Continue data={data} setInfoModal={setInfoModal} notification={notification} setPosition={setPosition}/> */}
+                    </div>
+                </PagesDiv>
+                <PagesDiv overflowTrue>
                     <div style={{display:'flex',flex:1,width:'100%',flexDirection:'column',margin:'0px 20px'}}>
                         <Page.Header
                           text='Dados Profissionais'
                           subText='Informe seus dados profissionais para prosseguir'
                         />
-                        <Page.ThirdForm notification={notification} unform={unform} setUnform={setUnform} onThirdForm={onThirdForm}/>
+                        <ThirdForm notification={notification} unform={unform} setUnform={setUnform} onThirdForm={onThirdForm}/>
                     </div>
                 </PagesDiv>
                 <div style={{display:'flex',flexDirection:'column',alignItems:'center',maxWidth:850,margin:'auto'}}>
@@ -152,10 +135,14 @@ export default function InputUserData() {
                 </div>
             </Carrousel>
             <Page.IconClose notification={notification} setLoad={setLoad} infoModal={infoModal} onLogout={onLogout}/>
-            {position > 1 ?
-                <Page.IconBack setPosition={setPosition} />
-            : null }
-        </Page>
+              <>
+                {position > 1 ?
+                    <Page.IconBack setPosition={setPosition} />
+                : null }
+              </>
+            </>
+          }
+          </Page>
     );
 }
 

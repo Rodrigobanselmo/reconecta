@@ -88,11 +88,12 @@ function TabItems(params) {
 
 }
 
-export default function SimpleTabs({children,tabValue,setTabValue,tabStayle={minWidth: 200}, tabsLabel=[], ...props}) {
+export default function SimpleTabs({children,tabValue,setTabValue,onChange,tabStayle={minWidth: 200}, tabsLabel=[], ...props}) {
   const classes = useStyles();
 
   const handleChange = (event, newValue) => {
-    setTabValue(newValue);
+    if (onChange) onChange(newValue)
+    else setTabValue(newValue);
   };
 
   return (

@@ -43,6 +43,7 @@ const light = {
       primary: '#000',
       secondary: '#303035',
       third: '#97969b',
+      tabsText: '#303035',
       primaryNav: '#00000088',
     },
     status: {

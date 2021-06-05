@@ -84,6 +84,7 @@ export const useNotification = () => {
           open: false,
           onClose: () => {},
           onClick: () => {},
+          component: null,
           ...props,
         },
       });
@@ -94,6 +95,7 @@ export const useNotification = () => {
           onClose: () => dispatchAction('modalReset', {}),
           onClick: () => dispatchAction('modalReset', {}),
           type: '',
+          component: null,
           ...props,
         },
       });
