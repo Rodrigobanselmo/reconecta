@@ -527,7 +527,7 @@ export function ProfessionForm({setUnform,notification,unform,onForm,save,dispat
   const handleSubmit = React.useCallback(async (formData) => {
 
     var arrayError = []
-    var novasActivities = [...activities]
+    var novasActivities = [...activities].filter(i=>i.activit!='') //! para caso queria poder definir profissao e nao somente especialidade retira o filter, mas afeta Perfil
     var newFormdata = {...formData}
     Object.keys(formData).map(key=>{
       if (formData[key] == '') arrayError.push(key)

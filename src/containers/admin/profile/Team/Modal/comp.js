@@ -132,12 +132,12 @@ AddModal.EmailInput =  function EmailInput({numInput,setNumInput,setEmails,email
 
   const addEmail = (index) => (event) => {
     onClearTime()
-    onTimeOut(()=>checkEmail(index,event.target.value),1000)
+    onTimeOut(()=>checkEmail(index,event.target.value.toLowerCase()),1000)
     let allEmails = [...emails]
-    if (event.target.value && event.target.value.length > 10) {
-      allEmails[index] = {email:event.target.value, status:'Load',type:'',message:'Carregando...'}
+    if (event.target.value.toLowerCase() && event.target.value.length > 10) {
+      allEmails[index] = {email:event.target.value.toLowerCase(), status:'Load',type:'',message:'Carregando...'}
     } else {
-      allEmails[index] = {email:event.target.value, status:'none',type:'',message:''}
+      allEmails[index] = {email:event.target.value.toLowerCase(), status:'none',type:'',message:''}
     }
     setEmails(allEmails)
   }

@@ -21,7 +21,6 @@ export function AuthProvider({ children }) {
   const {setLoad} = useLoaderScreen();
   const notification = useNotification();
 
-
   function checkSuccess(doc,user,newUser) {
     const importantData = {
       displayName:user?.displayName,
@@ -64,6 +63,7 @@ export function AuthProvider({ children }) {
       }
       // setLoad(false)
       // setCurrentUser(user)
+      console.log('user1',user)
       if (user) GetUserData(user,checkSuccess,checkError)
     })
 

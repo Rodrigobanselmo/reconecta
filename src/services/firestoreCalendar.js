@@ -46,12 +46,11 @@ export function AddCalendarDate(calendar,currentUser,checkSuccess,checkError,) {
 
   calendar.docId.map((item)=>{
     // console.log('DATA[item]',item,DATA[item.replace(currentUser.uid,'')])
-    if (!DATA[DATA[item.replace(currentUser.uid,'')]]) {
+    if (!DATA[item.replace(currentUser.uid,'')]) {
       var calendarRef = db.collection("calendar").doc(`${item}`) //currentUser.uid
       batch.delete(calendarRef)
     }
   })
-  calendar
 
   batch.commit().then(() => {
     checkSuccess()
@@ -70,7 +69,7 @@ export function GetCalendarDate(user,checkSuccess,checkError) {
       const DATA = doc.data()
       response = {...response,...DATA,docId:[...response.docId,doc.id]}
     });
-    checkSuccess(response);
+    checkSuccess(response,user);
   }).catch((error) => {
     checkError(errorCatch(error));
   });

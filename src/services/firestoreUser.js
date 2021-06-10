@@ -4,7 +4,7 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { db, st } from '../lib/firebase.prod.js';
+import { db, st, fb } from '../lib/firebase.prod.js';
 import {v4} from "uuid";
 
 
@@ -35,9 +35,10 @@ export function CreatePendingUser(
 ) {
   const array = [];
   const date = new Date();
+  const dataUserRef = db.collection('data').doc('emailsPermissions');
   const batch = db.batch();
   data.array.map((item) => {
-    const unform = data.unform[item.email]?data.unform[item.email]:{}
+    const unform = data.unform[item.email.toLowerCase()]?data.unform[item.email.toLowerCase()]:{}
     console.log('unform',unform)
     if (item?.id && item.id) {
       const pendingUsers = db.collection('users').doc(item.id);
@@ -50,9 +51,9 @@ export function CreatePendingUser(
         ...unform
       });
     } else {
-      const pendingUsers = db.collection('users').doc(item.email);
+      const pendingUsers = db.collection('users').doc(item.email.toLowerCase());
       batch.set(pendingUsers, {
-        email: item.email,
+        email: item.email.toLowerCase(),
         // type: item.type,
         creation: { start: date - 1, end: 0 },
         status: 'Aguardando Autenticação',
@@ -63,8 +64,9 @@ export function CreatePendingUser(
         ...unform
       });
     }
+    batch.update(dataUserRef,{data:fb.firestore.FieldValue.arrayUnion(item.email.toLowerCase())})
     array.push({
-      email: item.email,
+      email: item.email.toLowerCase(),
       // type: item.type,
       creation: date,
       status: 'Aguardando Autenticação',
@@ -91,9 +93,12 @@ export function AddUserData(
   uid,
   checkSuccess,
   checkError,
+  firstType,
+  ReduceData
 ) {
   const userRef = db.collection('users').doc(uid);
   const professionRef = db.collection('data').doc('professions');
+  const dataRef = db.collection('data');
 
   var batch = db.batch();
   let DATA  = {}
@@ -114,15 +119,41 @@ export function AddUserData(
 
   function batchCreate() {
 
-    batch.update(userRef,{...data})
-    if (data?.profession) batch.set(professionRef,{...DATA,[uid]:{...data.profession}})
+    let docId = null;
+    if (firstType) {
+      dataRef.where("id", "==", firstType).get()
+      .then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+          if(doc.data().data.length < 500) docId=doc.id
+        })
+        if (docId !== null) {
+          onCreate()
+        } else {
+          docId = `${firstType}-${v4()}`
+          dataRef.doc(docId).set({
+            id:firstType,
+            data:[]
+          }).then(()=>{
+            onCreate()
+          })
+        }
+        }).catch((error) => {
+          checkError(errorCatch(error))
+      });
+    } else onCreate()
 
-    batch.commit().then(() => {
-      checkSuccess('Document successfully updated!');
-    }).catch((error) => {
-      checkError(errorCatch(error));
-      console.error('Error updating document: ', error);
-    });
+    function onCreate() {
+      batch.update(userRef,{...data})
+      if (data?.profession) batch.set(professionRef,{...DATA,[uid]:{profession:[...data.profession.filter(i=>i.activit!='')],data:{name:data.name,cpf:data.cpf}}})
+      if (firstType) batch.update(dataRef.doc(docId),{data:fb.firestore.FieldValue.arrayUnion({...ReduceData})})
+
+      batch.commit().then(() => {
+        checkSuccess('Document successfully updated!');
+      }).catch((error) => {
+        checkError(errorCatch(error));
+        console.error('Error updating document: ', error);
+      });
+    }
   }
 }
 
@@ -153,35 +184,33 @@ export function GetUserData(
   const date = new Date();
 
   function checkPendingUser() {
-    const usersEmailRef = db.collection('users').doc(user.email);
+    console.log('user.email',user.email)
+    const usersEmailRef = db.collection('users').doc(user.email.toLowerCase());
     usersEmailRef
       .get()
       .then((docSnapshots) => {
         if (docSnapshots.exists) {
+          console.log(3)
           const docSnapshot = docSnapshots.data();
           db.collection('users')
             .doc(user.uid)
             .set({
+              ...docSnapshot,
               uid: user.uid,
               email: user.email,
-              type: docSnapshot?.type,
               creation: { start: date - 1, end: 0 },
               status: 'Ativo',
-              access: docSnapshot?.access,
-              image: docSnapshot?.image,
               name: '',
             })
             .then(() => {
               checkSuccess(
                 {
+                  ...docSnapshot,
                   uid: user.uid,
                   email: user.email,
-                  type: docSnapshot?.type,
                   creation: { start: date - 1, end: 0 },
                   status: 'Ativo',
-                  access: docSnapshot?.access,
                   name: '',
-                  image: docSnapshot?.image,
                 },
                 user,
               );
@@ -191,35 +220,35 @@ export function GetUserData(
               checkError(errorCatch(err));
             });
         } else {
-          usersRef
-            .set({
-              email: user.email,
-              name: '',
-              uid: user.uid,
-              info: {},
-            })
-            .then(() => {
-              checkSuccess(
-                {
-                  email: user.email,
-                  uid: user.uid,
-                  name: '',
-                  info: {},
-                },
-                user,
-                true,
-              );
-            })
-            .catch((err) => {
-              checkError(errorCatch(err));
-            });
+          // usersRef
+          //   .set({
+          //     email: user.email,
+          //     name: '',
+          //     uid: user.uid,
+          //     info: {},
+          //   })
+          //   .then(() => {
+          //     checkSuccess(
+          //       {
+          //         email: user.email,
+          //         uid: user.uid,
+          //         name: '',
+          //         info: {},
+          //       },
+          //       user,
+          //       true,
+          //     );
+          //   })
+          //   .catch((err) => {
+          //     checkError(errorCatch(err));
+          //   });
         }
       })
       .catch((err) => {
         checkError(errorCatch(err));
       });
   }
-
+  console.log(1)
   usersRef
     .get()
     .then((docSnapshot) => {
@@ -227,6 +256,7 @@ export function GetUserData(
         checkSuccess(docSnapshot.data(), user);
       } else {
         checkPendingUser();
+        console.log(2)
       }
     })
     .catch((error) => {
@@ -284,6 +314,62 @@ export function GetAllUsersCompany(
     });
 }
 
+export function GetAllDataTwoFilters(
+  access,
+  filter,
+  checkSuccess,
+  checkError,
+) {
+  const usersRef = db.collection('users');
+
+  usersRef
+    .where('access', '==', access)
+    .where('conector', '==', false)
+    .get()
+    .then(function (querySnapshot) {
+      const response = [];
+      querySnapshot.forEach(function (doc) {
+        const docx = doc.data();
+        if (docx?.creation) {
+          docx.end = docx.creation.end;
+          docx.creation = docx.creation.start;
+        }
+        response.push(docx);
+      });
+      checkSuccess(response);
+    })
+    .catch((error) => {
+      checkError(errorCatch(error));
+    });
+}
+
+export function GetAllConectors(
+  arrayContains,
+  checkSuccess,
+  checkError,
+) {
+  const usersRef = db.collection('users');
+
+  usersRef
+    .where('permissions', 'array-contains', ["ec"])
+    .get()
+    .then(function (querySnapshot) {
+      const response = [];
+      querySnapshot.forEach(function (doc) {
+        const docx = doc.data();
+        if (docx?.creation) {
+          docx.end = docx.creation.end;
+          docx.creation = docx.creation.start;
+        }
+        response.push(docx);
+      });
+      checkSuccess(response);
+    })
+    .catch((error) => {
+      checkError(errorCatch(error));
+    });
+}
+
 export function UpdateProfile(
   image,
   uid,
@@ -295,7 +381,7 @@ export function UpdateProfile(
       st.ref("profile").child(`${uid}_300x300`).getDownloadURL().then(url => {
         checkSuccess(url);
       }).catch((error) => {
-        checkError(errorCatch(error));
+        // checkError(errorCatch(error));
       });
     }, 3000);
     setTimeout(() => {

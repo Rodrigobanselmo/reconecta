@@ -72,6 +72,7 @@ const ItemContainer = styled.div`
   padding:3px 12px 3px 5px;
 
   p {
+    font-size:14px;
   }
 
   &:hover {

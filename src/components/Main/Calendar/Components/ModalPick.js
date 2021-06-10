@@ -56,14 +56,12 @@ export default function DateSelection({open,setOpen,onConfirm,dataCard}) {
   function onConsultArray() {
     const array = []
     currentUser?.profession && currentUser.profession.map(item=>{
-      console.log(item)
       if (!array.includes(item.activit)) array.push(item.activit)
     })
     return array
   }
 
   const consultArray = React.useMemo(() => onConsultArray(), [currentUser])
-  console.log(consultArray)
 
 
   var time = new Date((new Date()).setHours(0,0,0,0));
@@ -90,9 +88,6 @@ export default function DateSelection({open,setOpen,onConfirm,dataCard}) {
   const [daysSelected, setDaysSelected] = React.useState([(new Date(dataCard.date)).getDay()]);
 
 
-  // console.log((new Date('05/26/2021')))
-  // console.log(dataCard.time.initialDate)
-  // console.log(dataCard.time.initialDate<new Date('05/26/2021'))
   React.useEffect(() => {
     if (value =='all') {
       console.log(dataCard.time.dateEnd,new Date(dataCard.time.dateEnd),dataCard.time.dateEnd)
@@ -262,7 +257,7 @@ export default function DateSelection({open,setOpen,onConfirm,dataCard}) {
                 area:[...consultType],
                 id:uid,
                 uid:uidHour,
-                dateEnd:(!checkedB || !checked)?false:dateInputEnd,
+                dateEnd:(!checkedB || !checked)?false:new Date(dateInputEnd)*1,
                 numberOfConsults:numberOfConsultsCheck?numberOfConsults:1,
                 reptAfter,
                 consultTime:`${hoursSelectedAtd}:${minutesSelectedAtd}`,
@@ -292,7 +287,7 @@ export default function DateSelection({open,setOpen,onConfirm,dataCard}) {
                   area:[...consultType],
                   id:uid,
                   uid:uidHour,
-                  dateEnd:(!checkedB || !checked)?false:dateInputEnd,
+                  dateEnd:(!checkedB || !checked)?false:new Date(dateInputEnd)*1,
                   numberOfConsults:numberOfConsultsCheck?numberOfConsults:1,
                   reptAfter,
                   initialTime:`${hoursSelected}:${minutesSelected}`,
@@ -324,7 +319,6 @@ export default function DateSelection({open,setOpen,onConfirm,dataCard}) {
   const checkIfIsEdit = (create) => {
     if (dataCard.time?.uid) {
 
-      console.log()
       if (value == 'all') {
         var newCreate = {...calendar}
         newCreate = clone(newCreate)
@@ -385,9 +379,7 @@ export default function DateSelection({open,setOpen,onConfirm,dataCard}) {
     function checkSuccess(response) {
       var dataUser = {id:currentUser.uid,name:currentUser.name,photoURL:currentUser?.photoURL?currentUser.photoURL:null}
       dispatch({ type: 'CALENDAR_SET', payload: {...response, ...dataUser} })
-      // console.log('{...response, ...dataUser}',{...response, ...dataUser})
       dispatch({ type: 'SAVE', payload: true })
-      // setData({...response})
     }
 
     function checkError(error) {
@@ -411,7 +403,6 @@ export default function DateSelection({open,setOpen,onConfirm,dataCard}) {
       setDateInput(new Date((new Date()).setHours(0,0,0,0)))
       setDaysSelected([(new Date()).getDay()])
     } else {
-      console.log(create[1],'create[1]')
       notification.modal({
         title: 'Conflito de horários?',
         text:'Os horários que está querendo cadastrar, geram conflito com os já cadastrados, por favor revise-os novamente?',

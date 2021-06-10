@@ -5,12 +5,14 @@ import CloudDownload from '@material-ui/icons/CloudDownload';
 import ExitToApp from '@material-ui/icons/ExitToApp';
 import Person from '@material-ui/icons/Person';
 import Group from '@material-ui/icons/Group';
+import Work from '@material-ui/icons/Work';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import KeyboardArrowLeftOutlinedIcon from '@material-ui/icons/KeyboardArrowLeftOutlined';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import ArrowForwardOutlinedIcon from '@material-ui/icons/ArrowForwardOutlined';
 import ArrowBack from '@material-ui/icons/ArrowBack';
 import Search from '@material-ui/icons/Search';
+import Clock from '@material-ui/icons/AccessTime';
 import Add from '@material-ui/icons/Add';
 import Remove from '@material-ui/icons/Remove';
 import Cancel from '@material-ui/icons/Cancel';
@@ -45,7 +47,7 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import AllOut from '@material-ui/icons/AllOut';
 import FilterList from '@material-ui/icons/FilterList';
 import AssignmentTurnedInRoundedIcon from '@material-ui/icons/AssignmentTurnedInRounded';
-import MoreHorizRoundedIcon from '@material-ui/icons/MoreHorizRounded';
+import Face from '@material-ui/icons/Face';
 import MoreVertRoundedIcon from '@material-ui/icons/MoreVertRounded';
 import CameraAltOutlinedIcon from '@material-ui/icons/CameraAltOutlined';
 import PriorityHighIcon from '@material-ui/icons/PriorityHigh';
@@ -89,6 +91,12 @@ export const Icons = ({ type, ...props }) => {
 
     case 'Menu':
       return <MenuOutlinedIcon {...props} />;
+    case 'Work':
+      return <Work {...props} />;
+    case 'Client':
+      return <Face {...props} />;
+    case 'Clock':
+      return <Clock {...props} />;
     case 'MenuOpen':
       return <MenuOpenOutlinedIcon {...props} />;
 

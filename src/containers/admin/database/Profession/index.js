@@ -8,6 +8,7 @@ import { useLocation } from 'react-router-dom';
 import {useLoaderDashboard} from '../../../../context/LoadDashContext'
 import {Container,TableContainer} from './comp'
 
+
 const initialData = [
   { name: 'Educador Físico',activities:['Opção 1 Educador Físico','Opção 2 Educador Físico']},
   { name: 'Enfereiro',activities:['Opção 1 Enfereiro','Opção 2 Enfereiro']},
@@ -24,19 +25,13 @@ const initialData = [
 function Team() {
 
   const [open, setOpen] = useState(false)
-  const [queryOld, setQueryOld] = useState(false)
   const [usersRows, setUsersRows] = useState([...initialData])
   const [selected, setSelected] = useState([]);
 
   const {currentUser} = useAuth()
   const {setLoad} = useLoaderScreen();
   const notification = useNotification()
-  const query = new URLSearchParams(useLocation().search)
   const { setLoaderDash } = useLoaderDashboard();
-
-  useEffect(() => {
-    if (query.get('m') !== queryOld && query.get('m')) setOpen(true); setQueryOld(query.get('m'))
-  }, [query])
 
     return (
         <>

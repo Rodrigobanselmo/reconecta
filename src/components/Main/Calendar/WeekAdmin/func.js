@@ -17,7 +17,7 @@ export function onAddCalendarDate({calendar,currentUser,notification,setLoad,dis
     }, 600);
   }
 
-
+  console.log('calendar',calendar)
   AddCalendarDate(calendar,currentUser,checkSuccess,checkError)
 
 }

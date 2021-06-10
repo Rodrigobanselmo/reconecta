@@ -16,6 +16,7 @@ export function onAddUserData({unform,currentUser,setCurrentUser,setLoad,notific
     console.log('final',formattedData)
     setLoad(true)
     AddUserData(formattedData,currentUser.uid,checkSuccess,checkError)
+    // AddUserData(formattedData,currentUser.uid,checkSuccess,checkError,'admin',{creation:currentUser.creation,uid:currentUser.uid,name:formattedData.name,cpf:formattedData.cpf,email:formattedData.email})
     console.log('unform',unform)
     console.log('unform',formattedData)
     function checkSuccess() {

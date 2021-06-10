@@ -3,7 +3,7 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import firebase from 'firebase';
-import { auth } from '../lib/firebase.prod';
+import { auth,db } from '../lib/firebase.prod';
 
 const errorCatch = (error) => {
   let errorMessage = error;
@@ -41,16 +41,33 @@ export function CheckEmailExists(
   checkSuccess,
   checkError,
 ) {
+
+  const usersRef = db.collection('data').doc('emailsPermissions');
+
   auth
-    .fetchSignInMethodsForEmail(email)
-    .then((response) => {
-      setTimeout(() => {
-        checkSuccess(response);
-      }, 500);
-    })
-    .catch((error) => {
-      checkError(errorCatch(error));
-    });
+  .fetchSignInMethodsForEmail(email)
+  .then((response) => {
+
+    if (response.length == 0) {
+      usersRef.get().then((docSnapshot) => {
+        if (docSnapshot.exists) {
+          console.log(docSnapshot.data())
+          // if (docSnapshot.data().data.findIndex(i=>i.email==email) == -1) checkError('Este endereço de email não possui permissão para se cadastrar.')
+          if (docSnapshot.data().data.findIndex(i=>i==email) == -1) checkError('Este endereço de email não possui permissão para se cadastrar.')
+          else {
+            checkSuccess(response);
+          }
+        } else {
+          checkError('Este endereço de email não possui permissão para se cadastrar.');
+        }
+      }).catch((error) => {
+        checkError(errorCatch(error));
+      })
+    } else checkSuccess(response);
+
+  }).catch((error) => {
+    checkError(errorCatch(error));
+  });
 }
 
 export function CreateEmail(

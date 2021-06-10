@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import {useNotification} from '../../../context/NotificationContext'
 import {useLoaderDashboard} from '../../../context/LoadDashContext'
+import {Icons} from '../../../components/Icons/iconsDashboard'
 //undraw_mobile_testing_reah
-import { ReactComponent as Logo } from './undraw_mobile_testing_reah.svg';
 import {NormalizeData} from '../../../helpers/DataHandler';
 import {onGetHomeData} from './func'
 import styled from "styled-components";
@@ -89,40 +89,57 @@ export default function Home() {
   const [clients, setClients] = useState([]);
 
   useEffect(() => {
-    onGetHomeData({setClients,notification,setLoaderDash})
+    // onGetHomeData({setClients,notification,setLoaderDash})
   }, [])
 
 console.log(clients)
+function name(params) {
+  fetch('https://firebasestorage.googleapis.com/v0/b/reconecta-dev.appspot.com/o/AAASABESP.pdf?alt=media&token=0995fc68-c045-48e0-9e80-c93c13d1c506' , {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/pdf',
+    },
+  })
+  .then((response) => response.blob())
+  .then((blob) => {
+    // Create blob link to download
+    const url = window.URL.createObjectURL(
+      new Blob([blob]),
+    );
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute(
+      'download',
+      `FileName.pdf`,
+    );
+
+    // Append to html link element page
+    document.body.appendChild(link);
+
+    // Start download
+    link.click();
+
+    // Clean up and remove the link
+    link.parentNode.removeChild(link);
+  });
+}
 
   return (
     <div style={{display:'flex',flexDirection:'row',flex:1,height:'88%'}}>
       <div style={{display:'flex',flex:3,marginRight:10}}>
-
+        <div onClick={()=>{}}>
+          <a  target="_blank" href={'https://firebasestorage.googleapis.com/v0/b/reconecta-dev.appspot.com/o/AAASABESP.pdf?alt=media&token=0995fc68-c045-48e0-9e80-c93c13d1c506'}>
+          <Icons style={{fontSize:140}} type={`Avatar`}/>
+          </a>
+        </div>
       </div>
       <ContainerRight >
         <p>Clientes sem conectores</p>
-        <div className={'scrollView'}>
-          {clients.map(client=>{
-
-            var dateStart = client.plan?.start ? NormalizeData(new Date(parseInt(client.plan.start)),'normal') : 'Indisponível';
-            var dateEnd = client.plan?.end ? NormalizeData(new Date(parseInt(client.plan.end)),'normal') : 'Não Informado';
-
-            return (
-              <CardClient>
-                <p className={'name'}>{client.name}</p>
-                <div style={{display:'flex',flexDirection:'row',flex:1,justifyContent:'space-between'}}>
-                  <p className={'plan'}>Plano: {client.plan.name}</p>
-                  <p className={'planStart'}>{dateStart} -- {dateEnd}</p>
-                </div>
-              </CardClient>
-            )
-          })}
-        </div>
       </ContainerRight>
     </div>
   );
 }
 
 
-
+//https://firebasestorage.googleapis.com/v0/b/reconecta-dev.appspot.com/o/AAASABESP.pdf?alt=media&token=0995fc68-c045-48e0-9e80-c93c13d1c506
 {/* <Logo  height="400px" width="400px"/> */}

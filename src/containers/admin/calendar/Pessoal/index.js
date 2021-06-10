@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import {useNotification} from '../../../context/NotificationContext'
-import Calendar from '../../../components/Main/Calendar/WeekAdmin'
-import Header from '../../../components/Dashboard/Components/Blocks/Header'
+import {useNotification} from '../../../../context/NotificationContext'
+import Calendar from '../../../../components/Main/Calendar/WeekAdmin'
+import Header from '../../../../components/Dashboard/Components/Blocks/Header'
 
 export default function Home() {
 

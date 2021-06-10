@@ -2,7 +2,10 @@ import {
   HOME_ADMIN,
   TEAM,
   CALENDAR_ADMIN,
-  ADMIN_PROFESSION
+  DOWNLOAD,
+  ADMIN_PROFESSION,
+  CLIENTS,
+  CALENDAR_CONECTOR
 } from '../routes/routesNames'
 
 const itemsList = [
@@ -26,8 +29,16 @@ const itemsList = [
     text: "Profissões",
     description:'Gerenciar profissões e atividade',
     to:ADMIN_PROFESSION,
-    icon: 'Person',
+    icon: 'Work',
     id:ADMIN_PROFESSION,
+    onClick: () => {}
+  },
+  {
+    text: "Clientes",
+    // description:'Gerenciar profissões e atividade',
+    to:CLIENTS,
+    icon: 'Client',
+    id:CLIENTS,
     onClick: () => {}
   },
   {
@@ -37,7 +48,23 @@ const itemsList = [
     icon: 'Calendar',
     id:CALENDAR_ADMIN,
     onClick: () => {}
-  }
+  },
+  {
+    text: "Download",
+    description:'Download de arquivos',
+    to:DOWNLOAD,
+    icon: 'CloudDownload',
+    id:DOWNLOAD,
+    onClick: () => {}
+  },
+  {
+    text: "Horarios",
+    description:'Horarios de atendimento das equipes',
+    to:CALENDAR_CONECTOR,
+    icon: 'Clock',
+    id:CALENDAR_CONECTOR,
+    onClick: () => {}
+  },
 ];
 
 export const lists = [

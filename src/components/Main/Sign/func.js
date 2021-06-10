@@ -17,16 +17,16 @@ export function onCheckEmail({data,setData,setLoading,setError,onChangeAuthMetho
       setLoading(false)
       inputPass.current.focus()
     }
-  
+
     function checkError(error) {
       onErrorNotification(error)
       setData({...data,warnMessage: {body:error,type:'error'}});
       setLoading(false)
     }
 
-    if (checkValidUser(data.emailAddress,data,setData,setError)) {
+    if (checkValidUser(data.emailAddress.toLowerCase(),data,setData,setError)) {
       setLoading(true)
-      CheckEmailExists(data.emailAddress,checkSuccess,checkError)
+      CheckEmailExists(data.emailAddress.toLowerCase(),checkSuccess,checkError)
     } else {
       setError(data.warnMessage.body)
     }
